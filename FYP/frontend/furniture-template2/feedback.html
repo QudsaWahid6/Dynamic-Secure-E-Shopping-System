@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CraftHome Feedback</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Segoe UI;
+background:#f2f2f2;
+}
+
+/* NAVBAR */
+
+nav{
+background:#2b2b2b;
+color:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+}
+
+nav h2{
+color:#e0e0e0;
+font-size:30px;
+}
+
+nav ul{
+display:flex;
+gap:30px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+nav a:hover{
+color:#aaaaaa;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:75px 20px;
+background:linear-gradient(135deg,#1a1a1a,#4a4a4a);
+color:white;
+}
+
+.hero h1{
+font-size:58px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:20px;
+color:#cccccc;
+}
+
+/* FEEDBACK SECTION */
+
+.feedback-container{
+width:85%;
+margin:60px auto;
+display:flex;
+gap:35px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+/* FORM BOX */
+
+.form-box{
+background:white;
+width:650px;
+padding:40px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+.form-box h2{
+color:#1a1a1a;
+font-size:36px;
+margin-bottom:30px;
+}
+
+.input-group{
+margin-bottom:22px;
+}
+
+.input-group label{
+display:block;
+margin-bottom:10px;
+font-weight:bold;
+color:#1a1a1a;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select{
+width:100%;
+padding:15px;
+border:1px solid #ddd;
+border-radius:12px;
+font-size:16px;
+outline:none;
+}
+
+.input-group textarea{
+height:150px;
+resize:none;
+}
+
+/* RATING */
+
+.rating{
+display:flex;
+gap:10px;
+font-size:35px;
+margin-top:10px;
+color:#888888;
+cursor:pointer;
+}
+
+/* BUTTON */
+
+.submit-btn{
+width:100%;
+background:#2b2b2b;
+color:white;
+border:none;
+padding:18px;
+border-radius:14px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+.submit-btn:hover{
+background:#555555;
+}
+
+/* SUCCESS */
+
+.success{
+display:none;
+margin-top:25px;
+background:#edf7ed;
+color:#256029;
+padding:18px;
+border-radius:12px;
+font-weight:bold;
+text-align:center;
+}
+
+/* REVIEW BOX */
+
+.review-box{
+background:white;
+width:350px;
+padding:35px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+height:fit-content;
+}
+
+.review-box h2{
+color:#1a1a1a;
+margin-bottom:25px;
+}
+
+.review{
+margin-bottom:25px;
+padding-bottom:20px;
+border-bottom:1px solid #eee;
+}
+
+.review h3{
+color:#1a1a1a;
+margin-bottom:8px;
+}
+
+.review p{
+color:#666;
+line-height:1.6;
+}
+
+.stars{
+color:#888888;
+font-size:20px;
+margin-bottom:10px;
+}
+
+/* FOOTER */
+
+footer{
+margin-top:70px;
+background:#1a1a1a;
+color:white;
+text-align:center;
+padding:35px;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- NAVBAR -->
+
+<nav>
+
+<h2>🪑 CraftHome</h2>
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="menu.html">Products</a></li>
+<li><a href="#">Feedback</a></li>
+</ul>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<h1>Customer Feedback</h1>
+
+<p>
+Share your experience with our luxury furniture collection
+</p>
+
+</section>
+
+<!-- FEEDBACK -->
+
+<div class="feedback-container">
+
+<!-- LEFT SIDE -->
+
+<div class="form-box">
+
+<h2>Write A Review</h2>
+
+<div class="input-group">
+<label>Your Name</label>
+<input type="text" placeholder="Enter your name">
+</div>
+
+<div class="input-group">
+<label>Select Product</label>
+
+<select>
+<option>Modern Sofa</option>
+<option>Luxury Bed</option>
+<option>Dining Table</option>
+<option>Wooden Chair</option>
+<option>Office Desk</option>
+</select>
+
+</div>
+
+<div class="input-group">
+<label>Your Rating</label>
+
+<div class="rating">
+★ ★ ★ ★ ★
+</div>
+
+</div>
+
+<div class="input-group">
+<label>Your Feedback</label>
+
+<textarea placeholder="Write your review here..."></textarea>
+
+</div>
+
+<button class="submit-btn"
+onclick="submitReview()">
+Submit Review
+</button>
+
+<div class="success" id="successMsg">
+✅ Thank you! Your feedback has been submitted.
+</div>
+
+</div>
+
+<!-- RIGHT SIDE -->
+
+<div class="review-box">
+
+<h2>Recent Reviews</h2>
+
+<div class="review">
+
+<div class="stars">
+★★★★★
+</div>
+
+<h3>Sarah Khan</h3>
+
+<p>
+Amazing sofa quality and elegant design. Delivery was fast too.
+</p>
+
+</div>
+
+<div class="review">
+
+<div class="stars">
+★★★★★
+</div>
+
+<h3>Ahmed Ali</h3>
+
+<p>
+Dining table finishing is premium. Perfect for modern homes.
+</p>
+
+</div>
+
+<div class="review">
+
+<div class="stars">
+★★★★☆
+</div>
+
+<h3>Hina Noor</h3>
+
+<p>
+Loved the furniture collection and luxury theme styling.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+
+CraftHome Dynamic Furniture Template
+
+</footer>
+
+<script>
+
+function submitReview(){
+
+document.getElementById(
+"successMsg"
+).style.display = "block";
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store Analytics</title>
+<link rel="stylesheet" href="css/erp.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-grid" id="stats"></div>
+  <div class="erp-panel">
+    <h2>Revenue & Orders (Last 14 Days)</h2>
+    <div style="margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <label style="color:#94a3b8;font-size:0.85rem">Include statuses:</label>
+      <label style="font-size:0.85rem"><input type="checkbox" class="status-filter" value="pending" checked> Pending</label>
+      <label style="font-size:0.85rem"><input type="checkbox" class="status-filter" value="shipped" checked> Shipped</label>
+      <label style="font-size:0.85rem"><input type="checkbox" class="status-filter" value="delivered" checked> Delivered</label>
+      <label style="font-size:0.85rem"><input type="checkbox" class="status-filter" value="cancelled"> Cancelled</label>
+    </div>
+    <canvas id="revenueChart" height="100"></canvas>
+  </div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+initERPLayout({ title: "Analytics", activePage: "owner-analytics.html", allowedRoles: ["store_owner"] });
+getDashboard().then(res => {
+  if (!res.success) return;
+  document.getElementById("stats").innerHTML = `
+    <div class="erp-card"><h3>Products</h3><div class="value">${res.stats?.product_count||0}</div></div>
+    <div class="erp-card"><h3>Orders</h3><div class="value">${res.stats?.order_count||0}</div></div>
+    <div class="erp-card"><h3>Low Stock</h3><div class="value">${res.stats?.low_stock_count||0}</div></div>
+  `;
+});
+function renderRevenueChart(orders, statuses) {
+  const activeStatuses = statuses || ["pending", "shipped", "delivered"];
+  const filtered = orders.filter(o => activeStatuses.includes(o.status || "pending"));
+  const days = [];
+  const revenueByDay = {};
+  const ordersByDay = {};
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    days.push(key);
+    revenueByDay[key] = 0;
+    ordersByDay[key] = 0;
+  }
+  filtered.forEach(o => {
+    const key = (o.created_at || "").slice(0, 10);
+    if (key in revenueByDay) {
+      revenueByDay[key] += Number(o.total_amount || 0);
+      ordersByDay[key] += 1;
+    }
+  });
+
+  const existing = Chart.getChart("revenueChart");
+  if (existing) existing.destroy();
+
+  new Chart(document.getElementById("revenueChart"), {
+    type: "bar",
+    data: {
+      labels: days.map(d => d.slice(5)),
+      datasets: [
+        { label: "Revenue ($)", data: days.map(d => revenueByDay[d]), backgroundColor: "#38bdf8", yAxisID: "y" },
+        { label: "Orders", data: days.map(d => ordersByDay[d]), type: "line", borderColor: "#facc15", yAxisID: "y1" },
+      ],
+    },
+    options: {
+      scales: {
+        y: { position: "left", title: { display: true, text: "Revenue ($)" } },
+        y1: { position: "right", title: { display: true, text: "Orders" }, grid: { drawOnChartArea: false } },
+      },
+    },
+  });
+}
+
+let _allOrders = [];
+getDashboard().then(res => {
+  if (res.success) {
+    _allOrders = res.orders || [];
+    renderRevenueChart(_allOrders);
+    document.querySelectorAll(".status-filter").forEach(cb => {
+      cb.addEventListener("change", () => {
+        const active = [...document.querySelectorAll(".status-filter:checked")].map(c => c.value);
+        renderRevenueChart(_allOrders, active);
+      });
+    });
+  }
+});
+</script>
+</body>
+</html>

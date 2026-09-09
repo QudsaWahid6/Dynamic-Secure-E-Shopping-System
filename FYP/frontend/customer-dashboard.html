@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Dashboard - ERP Commerce</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-grid">
+    <div class="erp-card"><h3>My Orders</h3><div class="value" id="orderCount">—</div></div>
+    <div class="erp-card"><h3>Cart Items</h3><div class="value" id="cartCount">—</div></div>
+    <div class="erp-card"><h3>Wishlist</h3><div class="value" id="wishCount">—</div></div>
+    <div class="erp-card"><h3>Stores</h3><div class="value" id="storeCount">—</div></div>
+  </div>
+  <div class="erp-panel">
+    <h2>Welcome back!</h2>
+    <p style="color:#94a3b8;margin-bottom:16px">Discover AI-powered stores with personalized themes.</p>
+    <a href="customer-stores.html" class="erp-btn erp-btn-primary">Browse Stores</a>
+    <a href="customer-orders.html" class="erp-btn erp-btn-secondary">View Orders</a>
+  </div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/orders.js"></script>
+<script src="js/layout.js"></script>
+<script>
+const user = initERPLayout({ title: "Customer Dashboard", activePage: "customer-dashboard.html", allowedRoles: ["customer"] });
+if (user) {
+  document.getElementById("cartCount").textContent = getCart().length;
+  Promise.all([getOrders(), getWishlist(), getStores()]).then(([orders, wish, stores]) => {
+    document.getElementById("orderCount").textContent = orders.success ? orders.data.length : 0;
+    document.getElementById("wishCount").textContent = wish.success ? wish.data.length : 0;
+    document.getElementById("storeCount").textContent = stores.success ? stores.data.length : 0;
+  });
+}
+</script>
+</body>
+</html>

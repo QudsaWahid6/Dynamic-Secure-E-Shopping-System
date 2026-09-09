@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Your Store Template</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:linear-gradient(180deg,#0B1020 0%,#111827 65%,#0F172A 100%);
+color:white;
+overflow-x:hidden;
+}
+
+/* glow background */
+body::before{
+content:"";
+position:fixed;
+width:500px;
+height:500px;
+background:#2563EB;
+filter:blur(180px);
+opacity:.18;
+top:-120px;
+left:-120px;
+z-index:0;
+}
+
+body::after{
+content:"";
+position:fixed;
+width:450px;
+height:450px;
+background:#06B6D4;
+filter:blur(180px);
+opacity:.15;
+bottom:-120px;
+right:-120px;
+z-index:0;
+}
+
+.container{
+position:relative;
+z-index:2;
+width:1150px;
+margin:auto;
+padding:60px 30px;
+}
+
+/* HEADINGS */
+h1{
+text-align:center;
+font-size:52px;
+background:linear-gradient(90deg,#38BDF8,#2563EB);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.subtitle{
+text-align:center;
+color:#cbd5e1;
+margin-top:10px;
+}
+
+/* SECTION TITLE */
+.section-title{
+margin-top:70px;
+font-size:34px;
+color:#38BDF8;
+}
+
+/* CARDS */
+.cards{
+display:flex;
+gap:28px;
+margin-top:35px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.card{
+background:rgba(17,24,39,.92);
+width:330px;
+border-radius:22px;
+overflow:hidden;
+border:1px solid rgba(56,189,248,.15);
+box-shadow:0 10px 30px rgba(0,0,0,.35);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+box-shadow:0 18px 45px rgba(37,99,235,.25);
+}
+
+.card img{
+width:100%;
+height:220px;
+object-fit:cover;
+filter:brightness(.9);
+}
+
+.content{
+padding:22px;
+}
+
+.content h3{
+color:#38BDF8;
+margin-bottom:8px;
+}
+
+.content p{
+color:#cbd5e1;
+font-size:14px;
+}
+
+/* BUTTONS */
+.buttons{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+.preview-btn{
+flex:1;
+padding:12px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:#0f172a;
+color:#38BDF8;
+border:1px solid rgba(56,189,248,.25);
+transition:.3s;
+}
+
+.preview-btn:hover{
+background:#111827;
+}
+
+.use-btn{
+flex:1;
+padding:12px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+color:white;
+background:linear-gradient(90deg,#2563EB,#06B6D4);
+box-shadow:0 8px 25px rgba(37,99,235,.25);
+transition:.3s;
+}
+
+.use-btn:hover{
+transform:translateY(-3px);
+}
+
+/* TERMS BOX */
+.terms-box{
+margin-top:80px;
+background:rgba(17,24,39,.92);
+padding:40px;
+border-radius:24px;
+border:1px solid rgba(56,189,248,.15);
+box-shadow:0 10px 40px rgba(0,0,0,.4);
+}
+
+.terms-box h2{
+color:#38BDF8;
+margin-bottom:15px;
+}
+
+#selectedTemplate{
+color:#cbd5e1;
+margin-bottom:20px;
+}
+
+.check{
+margin-top:15px;
+color:#cbd5e1;
+font-size:16px;
+}
+
+.check input{
+margin-right:8px;
+transform:scale(1.1);
+}
+
+/* FINAL BUTTON */
+.final-btn{
+margin-top:25px;
+width:100%;
+padding:16px;
+border:none;
+border-radius:14px;
+cursor:pointer;
+font-size:16px;
+font-weight:600;
+color:white;
+background:linear-gradient(90deg,#2563EB,#06B6D4);
+box-shadow:0 8px 25px rgba(37,99,235,.25);
+transition:.3s;
+}
+
+.final-btn:hover{
+transform:translateY(-3px);
+}
+
+/* responsive */
+@media(max-width:900px){
+.container{
+width:95%;
+}
+.cards{
+flex-direction:column;
+align-items:center;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Select A Ready-Made Store Template</h1>
+<p class="subtitle">Preview templates, choose one for your store and continue setup.</p>
+
+<h2 class="section-title">🍔 Food Templates</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836">
+<div class="content">
+<h3>Food Delivery Template</h3>
+<p>Ideal for food ordering businesses.</p>
+
+<div class="buttons">
+<a href="food-template1/index.html"><button class="preview-btn">Preview</button></a>
+<button class="use-btn" onclick="chooseTemplate('Food Delivery Template')">Use</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0">
+<div class="content">
+<h3>Desi Restaurant Template</h3>
+<p>Premium restaurant website layout.</p>
+
+<div class="buttons">
+<a href="food-template2/index.html"><button class="preview-btn">Preview</button></a>
+<button class="use-btn" onclick="chooseTemplate('Restaurant Template')">Use</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4">
+<div class="content">
+<h3>Fast Food Template</h3>
+<p>Modern fast-food business layout.</p>
+
+<div class="buttons">
+<a href="food-template3/index.html"><button class="preview-btn">Preview</button></a>
+<button class="use-btn" onclick="chooseTemplate('Fast Food Template')">Use</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<h2 class="section-title">🪑 Furniture Templates</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85">
+<div class="content">
+<h3>Modern Furniture Store</h3>
+<p>Perfect for furniture businesses.</p>
+
+<div class="buttons">
+<a href="furniture-template1/index.html"><button class="preview-btn">Preview</button></a>
+<button class="use-btn" onclick="chooseTemplate('Modern Furniture')">Use</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e">
+<div class="content">
+<h3>Furniture Store</h3>
+<p>Premium decor shopping template.</p>
+
+<div class="buttons">
+<a href="furniture-template2/index.html"><button class="preview-btn">Preview</button></a>
+<button class="use-btn" onclick="chooseTemplate('Luxury Decor')">Use</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1484101403633-562f891dc89a">
+<div class="content">
+<h3>Minimal Furniture</h3>
+<p>Simple Scandinavian layout.</p>
+
+<div class="buttons">
+<a href="furniture-template3/index.html"><button class="preview-btn">Preview</button></a>
+<button class="use-btn" onclick="chooseTemplate('Minimal Furniture')">Use</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="terms-box">
+
+<h2>Store Setup Terms</h2>
+
+<p id="selectedTemplate">No template selected yet.</p>
+
+<div class="check">
+<input type="checkbox"> I agree to use this template.
+</div>
+
+<div class="check">
+<input type="checkbox"> I accept platform policies.
+</div>
+
+<button class="final-btn" onclick="assignTemplate()">
+Proceed & Assign Template
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let chosenTemplate="";
+
+function chooseTemplate(name){
+chosenTemplate=name;
+document.getElementById("selectedTemplate").innerText="Selected: "+name;
+alert(name+" selected ✔");
+}
+
+function assignTemplate(){
+if(chosenTemplate==""){
+alert("Please select a template first.");
+return;
+}
+alert("Template assigned successfully ✔");
+window.location.href="Runtime preview.html";
+}
+
+</script>
+
+</body>
+</html>

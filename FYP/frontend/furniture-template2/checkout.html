@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CraftHome Checkout</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Segoe UI;
+background:#f2f2f2;
+}
+
+/* NAVBAR */
+
+nav{
+background:#2b2b2b;
+color:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+}
+
+nav h2{
+color:#e0e0e0;
+font-size:30px;
+}
+
+nav ul{
+display:flex;
+gap:30px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+nav a:hover{
+color:#aaaaaa;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:70px 20px;
+background:linear-gradient(135deg,#1a1a1a,#4a4a4a);
+color:white;
+}
+
+.hero h1{
+font-size:58px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:20px;
+color:#cccccc;
+}
+
+/* CHECKOUT */
+
+.checkout-container{
+width:85%;
+margin:60px auto;
+display:flex;
+gap:35px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+/* FORM */
+
+.form-box{
+background:white;
+width:700px;
+padding:40px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+.form-box h2{
+color:#1a1a1a;
+font-size:36px;
+margin-bottom:30px;
+}
+
+.input-group{
+margin-bottom:22px;
+}
+
+.input-group label{
+display:block;
+margin-bottom:10px;
+font-weight:bold;
+color:#1a1a1a;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select{
+width:100%;
+padding:15px;
+border:1px solid #ddd;
+border-radius:12px;
+font-size:16px;
+outline:none;
+}
+
+.input-group textarea{
+height:120px;
+resize:none;
+}
+
+.place-btn{
+width:100%;
+background:#2b2b2b;
+color:white;
+border:none;
+padding:18px;
+border-radius:14px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+.place-btn:hover{
+background:#555555;
+}
+
+/* SUMMARY */
+
+.summary{
+background:white;
+width:320px;
+padding:35px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+height:fit-content;
+}
+
+.summary h2{
+color:#1a1a1a;
+margin-bottom:25px;
+}
+
+.summary-item{
+display:flex;
+justify-content:space-between;
+margin:16px 0;
+font-size:18px;
+}
+
+.total{
+font-size:30px;
+font-weight:bold;
+color:#555555;
+margin-top:25px;
+}
+
+/* SUCCESS */
+
+.success{
+display:none;
+margin-top:25px;
+background:#edf7ed;
+color:#256029;
+padding:18px;
+border-radius:12px;
+font-weight:bold;
+text-align:center;
+}
+
+/* FOOTER */
+
+footer{
+margin-top:70px;
+background:#1a1a1a;
+color:white;
+text-align:center;
+padding:35px;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- NAVBAR -->
+
+<nav>
+
+<h2>🪑 CraftHome</h2>
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="menu.html">Products</a></li>
+<li><a href="feedback.html">Feedback</a></li>
+</ul>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<h1>Checkout</h1>
+
+<p>
+Complete your luxury furniture order
+</p>
+
+</section>
+
+<!-- CHECKOUT -->
+
+<div class="checkout-container">
+
+<!-- FORM -->
+
+<div class="form-box">
+
+<h2>Shipping Details</h2>
+
+<div class="input-group">
+<label>Full Name</label>
+<input type="text" placeholder="Enter your full name">
+</div>
+
+<div class="input-group">
+<label>Email Address</label>
+<input type="email" placeholder="Enter your email">
+</div>
+
+<div class="input-group">
+<label>Phone Number</label>
+<input type="text" placeholder="Enter your phone number">
+</div>
+
+<div class="input-group">
+<label>Home Address</label>
+<textarea placeholder="Enter complete address"></textarea>
+</div>
+
+<div class="input-group">
+<label>Payment Method</label>
+
+<select>
+<option>Cash On Delivery</option>
+<option>Credit Card</option>
+<option>Bank Transfer</option>
+</select>
+
+</div>
+
+<button class="place-btn"
+onclick="placeOrder()">
+Place Order
+</button>
+
+<div class="success" id="successMsg">
+✅ Your furniture order has been placed successfully!
+</div>
+
+</div>
+
+<!-- SUMMARY -->
+
+<div class="summary">
+
+<h2>Order Summary</h2>
+
+<div class="summary-item">
+<span>Furniture Total</span>
+<span id="subTotal">$0</span>
+</div>
+
+<div class="summary-item">
+<span>Delivery</span>
+<span>$50</span>
+</div>
+
+<div class="summary-item">
+<span>Assembly</span>
+<span>$30</span>
+</div>
+
+<div class="total" id="finalTotal">
+Total: $0
+</div>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+
+CraftHome Dynamic Furniture Template
+
+</footer>
+
+<script>
+
+let cart =
+JSON.parse(localStorage.getItem("cart"))
+|| [];
+
+let subtotal = 0;
+
+cart.forEach(item=>{
+
+subtotal += item.price;
+
+});
+
+let finalTotal = subtotal + 80;
+
+document.getElementById(
+"subTotal"
+).innerHTML =
+"$" + subtotal;
+
+document.getElementById(
+"finalTotal"
+).innerHTML =
+"Total: $" + finalTotal;
+
+function placeOrder(){
+
+document.getElementById(
+"successMsg"
+).style.display = "block";
+
+localStorage.removeItem("cart");
+
+}
+
+</script>
+
+</body>
+</html>

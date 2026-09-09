@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders - Store Owner</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div id="alertArea"></div>
+  <div class="erp-panel"><h2>Store Orders</h2><div id="orderTable"></div></div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/orders.js"></script>
+<script>
+const user = initERPLayout({ title: "Orders", activePage: "owner-orders.html", allowedRoles: ["store_owner"] });
+if (user) {
+  const alertArea = document.getElementById("alertArea");
+  const table = document.getElementById("orderTable");
+  async function load() {
+    const res = await getOrders();
+    renderOrderBoard(table, res.data || [], {
+      onStatusChange: async (id, status) => {
+        const r = await updateOrderStatus(id, status);
+        if (r.success) load(); else showAlert(alertArea, r.error || "Update failed");
+      },
+    });
+  }
+  load();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme Library</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-panel"><h2>Saved Themes</h2><p style="color:#94a3b8;margin-bottom:16px">All AI-generated and saved themes for your store.</p><div id="library"></div></div>
+  <div class="erp-panel"><h2>Prebuilt Templates</h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+      <a href="food-template1/index.html" class="erp-btn erp-btn-secondary" target="_blank">Food Template 1</a>
+      <a href="food-template2/index.html" class="erp-btn erp-btn-secondary" target="_blank">Food Template 2</a>
+      <a href="furniture-template1/index.html" class="erp-btn erp-btn-secondary" target="_blank">Furniture Template 1</a>
+      <a href="template-selection.html" class="erp-btn erp-btn-primary">View All Templates</a>
+    </div>
+  </div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/theme.js"></script>
+<script>
+const user = initERPLayout({ title: "Theme Library", activePage: "owner-theme-library.html", allowedRoles: ["store_owner"] });
+if (user) {
+  getDashboard().then(d => d.success && getThemes(d.store.id).then(r => renderThemeCards(document.getElementById("library"), r.data || [])));
+}
+</script>
+</body>
+</html>

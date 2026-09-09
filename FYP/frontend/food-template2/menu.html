@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DesiZaika Menu</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Segoe UI;
+background:#fff8f3;
+}
+
+/* NAVBAR */
+
+nav{
+background:#4b1d0f;
+color:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+nav h2{
+color:#ffcf9c;
+}
+
+nav ul{
+display:flex;
+gap:30px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+nav a:hover{
+color:#ffcf9c;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:80px 20px;
+background:linear-gradient(135deg,#7a2f16,#c46b32);
+color:white;
+}
+
+.hero h1{
+font-size:58px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:20px;
+opacity:.9;
+}
+
+/* CATEGORY */
+
+.category{
+padding:70px;
+}
+
+.category h2{
+text-align:center;
+font-size:40px;
+margin-bottom:40px;
+color:#7a2f16;
+}
+
+/* CARDS */
+
+.cards{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+}
+
+.card{
+background:white;
+width:290px;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+}
+
+.card img{
+width:100%;
+height:220px;
+object-fit:cover;
+}
+
+.content{
+padding:22px;
+text-align:center;
+}
+
+.content h3{
+margin-bottom:10px;
+color:#4b1d0f;
+}
+
+.content p{
+color:#666;
+margin-bottom:12px;
+}
+
+.price{
+font-size:22px;
+font-weight:bold;
+color:#c46b32;
+margin-bottom:15px;
+}
+
+button{
+background:#7a2f16;
+color:white;
+border:none;
+padding:12px 22px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#c46b32;
+}
+
+/* SPECIAL DEAL */
+
+.deal{
+width:85%;
+margin:60px auto;
+background:#4b1d0f;
+color:white;
+padding:45px;
+border-radius:25px;
+text-align:center;
+}
+
+.deal h2{
+font-size:42px;
+margin-bottom:15px;
+color:#ffcf9c;
+}
+
+.deal-btn{
+display:inline-block;
+margin-top:20px;
+background:#ffcf9c;
+color:#4b1d0f;
+padding:14px 28px;
+border-radius:12px;
+text-decoration:none;
+font-weight:bold;
+}
+
+/* FOOTER */
+
+footer{
+background:#2d1209;
+color:white;
+text-align:center;
+padding:35px;
+margin-top:70px;
+}
+
+</style>
+
+</head>
+<body>
+
+<nav>
+
+<h2>🍛 DesiZaika</h2>
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="#">Menu</a></li>
+<li><a href="feedback.html">Feedback</a></li>
+</ul>
+
+</nav>
+
+<section class="hero">
+
+<h1>Traditional Pakistani Flavors</h1>
+
+<p>
+Freshly cooked desi dishes full of taste and culture
+</p>
+
+</section>
+
+
+<!-- BIRYANI SECTION -->
+
+<section class="category">
+
+<h2>🍚 Biryani Specials</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Chicken Biryani</h3>
+<p>Spicy traditional Karachi style biryani</p>
+<div class="price">$12</div>
+<button onclick="addToCart('Chicken Biryani',12)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1642821373181-696a54913e93?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Beef Biryani</h3>
+<p>Rich desi masala flavor</p>
+<div class="price">$14</div>
+<button onclick="addToCart('Beef Biryani',14)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1701579231305-d84d8af9a3fd?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Hyderabadi Biryani</h3>
+<p>Authentic dum biryani experience</p>
+<div class="price">$15</div>
+<button onclick="addToCart('Hyderabadi Biryani',15)">
+Add To Cart
+</button>
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- BBQ SECTION -->
+
+<section class="category">
+
+<h2>🔥 BBQ & Grill</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1603360946369-dc9bb6258143?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Chicken Tikka</h3>
+<p>Smoky charcoal grilled tikka</p>
+<div class="price">$10</div>
+<button onclick="addToCart('Chicken Tikka',10)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Seekh Kabab</h3>
+<p>Juicy beef seekh kababs</p>
+<div class="price">$11</div>
+<button onclick="addToCart('Seekh Kabab',11)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>BBQ Platter</h3>
+<p>Mixed desi grill platter</p>
+<div class="price">$18</div>
+<button onclick="addToCart('BBQ Platter',18)">
+Add To Cart
+</button>
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CURRY SECTION -->
+
+<section class="category">
+
+<h2>🍲 Desi Curries</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1604908176997-431221f7c3b7?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Butter Chicken</h3>
+<p>Creamy tomato chicken curry</p>
+<div class="price">$13</div>
+<button onclick="addToCart('Butter Chicken',13)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1626508035297-0cd27c397d7a?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Nihari</h3>
+<p>Slow cooked traditional nihari</p>
+<div class="price">$16</div>
+<button onclick="addToCart('Nihari',16)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1666190092159-3171cf0fbb12?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Chicken Karahi</h3>
+<p>Fresh tomato spicy karahi</p>
+<div class="price">$15</div>
+<button onclick="addToCart('Chicken Karahi',15)">
+Add To Cart
+</button>
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- DESSERTS -->
+
+<section class="category">
+
+<h2>🍰 Desserts & Drinks</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Falooda</h3>
+<p>Cold sweet desi dessert drink</p>
+<div class="price">$6</div>
+<button onclick="addToCart('Falooda',6)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Gulab Jamun</h3>
+<p>Soft sweet traditional dessert</p>
+<div class="price">$5</div>
+<button onclick="addToCart('Gulab Jamun',5)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1621939514649-280e2ee25f60?auto=format&fit=crop&w=800&q=80">
+<div class="content">
+<h3>Mango Lassi</h3>
+<p>Refreshing chilled mango drink</p>
+<div class="price">$4</div>
+<button onclick="addToCart('Mango Lassi',4)">
+Add To Cart
+</button>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<div class="deal">
+
+<h2>Family Desi Deal</h2>
+
+<p>
+2 Biryani + BBQ Platter + Drinks only for $30
+</p>
+
+<a href="cart.html" class="deal-btn">
+Order Family Deal
+</a>
+
+</div>
+
+<footer>
+
+DesiZaika Dynamic Restaurant Template Preview
+
+</footer>
+
+<script>
+
+function addToCart(name,price){
+
+let cart =
+JSON.parse(localStorage.getItem("cart"))
+|| [];
+
+cart.push({
+name:name,
+price:price
+});
+
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+);
+
+window.location.href="cart.html";
+
+}
+
+</script>
+
+</body>
+</html>

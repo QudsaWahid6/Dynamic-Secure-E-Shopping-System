@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Settings</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-panel" style="max-width:560px">
+    <h2>Admin Profile</h2>
+    <div id="alertArea"></div>
+
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px">
+      <img id="avatarPreview" src="" alt="Avatar"
+        style="width:72px;height:72px;border-radius:50%;object-fit:cover;background:#1e293b;border:2px solid rgba(56,189,248,0.3)"
+        onerror="this.src='https://ui-avatars.com/api/?name=Admin&background=0ea5e9&color=fff'">
+      <div>
+        <div id="profileName" style="font-weight:700;font-size:1.1rem"></div>
+        <div id="profileEmail" style="color:#94a3b8;font-size:0.85rem"></div>
+        <span style="font-size:0.75rem;padding:2px 10px;border-radius:20px;background:#7c3aed;color:#fff">Super Admin</span>
+      </div>
+    </div>
+
+    <div class="erp-form-group"><label>Name</label><input class="erp-input" id="name" placeholder="Your name"></div>
+    <div class="erp-form-group"><label>Profile Image URL</label><input class="erp-input" id="avatar" placeholder="https://..."></div>
+    <div class="erp-form-group"><label>Email</label><input class="erp-input" id="email" disabled style="opacity:0.5;cursor:not-allowed"></div>
+    <button class="erp-btn erp-btn-primary" id="saveBtn" style="margin-top:8px">Save Changes</button>
+  </div>
+
+  <div class="erp-panel" style="max-width:560px;margin-top:16px">
+    <h2>Change Password</h2>
+    <div id="pwAlertArea"></div>
+    <div class="erp-form-group"><label>Current Password</label><input class="erp-input" type="password" id="currentPw"></div>
+    <div class="erp-form-group"><label>New Password</label><input class="erp-input" type="password" id="newPw"></div>
+    <div class="erp-form-group"><label>Confirm New Password</label><input class="erp-input" type="password" id="confirmPw"></div>
+    <button class="erp-btn erp-btn-primary" id="changePwBtn">Change Password</button>
+  </div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+const user = initERPLayout({ title: "Settings", activePage: "admin-settings.html", allowedRoles: ["super_admin"] });
+if (user) {
+  document.getElementById("name").value = user.name || "";
+  document.getElementById("avatar").value = user.profile_image_url || "";
+  document.getElementById("email").value = user.email || "";
+  document.getElementById("profileName").textContent = user.name || "Admin";
+  document.getElementById("profileEmail").textContent = user.email || "";
+  document.getElementById("avatarPreview").src = user.profile_image_url ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name||"Admin")}&background=0ea5e9&color=fff`;
+
+  document.getElementById("avatar").addEventListener("input", function() {
+    document.getElementById("avatarPreview").src = this.value ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(document.getElementById("name").value||"Admin")}&background=0ea5e9&color=fff`;
+  });
+
+  document.getElementById("saveBtn").addEventListener("click", async () => {
+    const res = await updateProfile({
+      name: document.getElementById("name").value,
+      profile_image_url: document.getElementById("avatar").value
+    });
+    if (res.success) {
+      saveSession(getToken(), { ...user, ...res.profile });
+      document.getElementById("profileName").textContent = document.getElementById("name").value;
+      showAlert(document.getElementById("alertArea"), "Profile saved!", "success");
+    } else {
+      showAlert(document.getElementById("alertArea"), res.error || "Save failed");
+    }
+  });
+
+  document.getElementById("changePwBtn").addEventListener("click", async () => {
+    const currentPw = document.getElementById("currentPw").value;
+    const newPw = document.getElementById("newPw").value;
+    const confirmPw = document.getElementById("confirmPw").value;
+    const pwArea = document.getElementById("pwAlertArea");
+    if (!currentPw || !newPw || !confirmPw) { showAlert(pwArea, "Fill all password fields"); return; }
+    if (newPw !== confirmPw) { showAlert(pwArea, "New passwords do not match"); return; }
+    if (newPw.length < 6) { showAlert(pwArea, "Password must be at least 6 characters"); return; }
+    const res = await apiRequest("/users/change-password", "POST", { current_password: currentPw, new_password: newPw });
+    if (res.success) {
+      showAlert(pwArea, "Password changed!", "success");
+      ["currentPw","newPw","confirmPw"].forEach(id => document.getElementById(id).value = "");
+    } else {
+      showAlert(pwArea, res.error || "Failed to change password");
+    }
+  });
+}
+</script>
+</body>
+</html>

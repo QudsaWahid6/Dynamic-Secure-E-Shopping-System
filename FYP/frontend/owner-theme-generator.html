@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Theme Generator</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div id="alertArea"></div>
+  <div class="erp-panel">
+    <h2>AI Theme Generator</h2>
+    <p style="color:#94a3b8;margin-bottom:20px">Gemini returns JSON (colors, layout, hero text, background image). That JSON is applied to the fixed <strong>dynamic-store.html</strong> template — not a full page rewrite.</p>
+    <div class="erp-form-group"><label>Business Type</label>
+      <select class="erp-select" id="businessType">
+        <option value="food">Food</option>
+        <option value="clothing">Clothing</option>
+      </select>
+    </div>
+    <div class="erp-form-group"><label>Store Name</label><input class="erp-input" id="storeName" placeholder="Enter your store's display name"></div>
+    <div class="erp-form-group"><label>Region</label><select class="erp-select" id="region"><option>Pakistan</option><option>Middle East</option><option>Europe</option><option>USA</option><option>Asia</option></select></div>
+    
+    <div class="erp-form-group"><label>Currency</label>
+      <select class="erp-select" id="storeCurrency">
+        <option value="USD">USD ($)</option>
+        <option value="PKR">PKR (Rs)</option>
+        <option value="EUR">EUR (€)</option>
+        <option value="GBP">GBP (£)</option>
+        <option value="AED">AED (د.إ)</option>
+      </select>
+    </div>
+
+    <div class="erp-form-group" id="conversionRateField" style="display:none">
+      <label>Conversion Rate (multiply all product prices by this number)</label>
+      <input class="erp-input" id="conversionRate" type="number" step="0.0001" placeholder="e.g. 278 for USD → PKR">
+    </div>
+
+
+
+    <div class="erp-form-group"><label>Payment Options</label>
+      <select class="erp-select" id="storePaymentOptions">
+        <option value="cod">Cash on Delivery only</option>
+        <option value="online">Online only</option>
+        <option value="both">Both</option>
+      </select>
+    </div>
+    <div class="erp-form-group" id="bankFields" style="display:none">
+      <label>Bank Account Title</label><input class="erp-input" id="bankTitle">
+      <label>Bank Account Number / IBAN</label><input class="erp-input" id="bankNumber">
+      <label>Bank Name</label><input class="erp-input" id="bankName">
+    </div>
+    
+    <div class="erp-form-group"><label>Hero Layout</label>
+      <select class="erp-select" id="heroLayout">
+        <option value="image-right">Image Right (text left, bg image)</option>
+        <option value="centered">Centered (text centered over image)</option>
+        <option value="split">Split (text left, image panel right)</option>
+        <option value="image-left">Image Left (text right, image panel left)</option>
+      </select>
+    </div>
+    
+    
+    <div class="erp-form-group"><label>Style</label><select class="erp-select" id="style">
+      <option value="modern">Modern</option><option value="traditional">Traditional</option>
+      <option value="luxury">Luxury</option><option value="minimal">Minimal</option>
+      <option value="aesthetic">Aesthetic</option><option value="regional">Regional</option>
+    </select></div>
+    <div class="erp-form-group"><label>Aesthetic Notes</label><textarea class="erp-textarea" id="aesthetic" placeholder="Describe your preferred look..."></textarea></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="erp-btn erp-btn-primary" id="generateBtn">Generate Theme JSON + Apply Template</button>
+      <a class="erp-btn erp-btn-secondary" id="previewBtn" href="store-live.html" style="text-decoration:none;display:none">View Live Store ↗</a>
+    </div>
+  </div>
+
+  <!-- Manual Color Override Panel -->
+  <div class="erp-panel" id="colorPanel" style="display:none">
+    <h2>Manual Color Overrides <span style="color:#64748b;font-size:0.85rem;font-weight:400">(optional — overrides AI palette)</span></h2>
+    <p style="color:#94a3b8;margin-bottom:16px;font-size:0.85rem">Pick specific colors to override the AI-generated palette. Leave unchanged to keep AI values.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:20px;margin-bottom:16px">
+      <div class="erp-form-group" style="min-width:150px">
+        <label>Primary Color</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="color" id="cp_primary" style="width:40px;height:36px;border:none;background:none;cursor:pointer;padding:0">
+          <span id="cp_primary_hex" style="color:#94a3b8;font-size:0.85rem"></span>
+        </div>
+      </div>
+      <div class="erp-form-group" style="min-width:150px">
+        <label>Secondary Color</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="color" id="cp_secondary" style="width:40px;height:36px;border:none;background:none;cursor:pointer;padding:0">
+          <span id="cp_secondary_hex" style="color:#94a3b8;font-size:0.85rem"></span>
+        </div>
+      </div>
+      <div class="erp-form-group" style="min-width:150px">
+        <label>Accent Color</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="color" id="cp_accent" style="width:40px;height:36px;border:none;background:none;cursor:pointer;padding:0">
+          <span id="cp_accent_hex" style="color:#94a3b8;font-size:0.85rem"></span>
+        </div>
+      </div>
+      <div class="erp-form-group" style="min-width:150px">
+        <label>Background Color</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="color" id="cp_background" style="width:40px;height:36px;border:none;background:none;cursor:pointer;padding:0">
+          <span id="cp_background_hex" style="color:#94a3b8;font-size:0.85rem"></span>
+        </div>
+      </div>
+      <div class="erp-form-group" style="min-width:150px">
+        <label>Text Color</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="color" id="cp_text" style="width:40px;height:36px;border:none;background:none;cursor:pointer;padding:0">
+          <span id="cp_text_hex" style="color:#94a3b8;font-size:0.85rem"></span>
+        </div>
+      </div>
+      <div class="erp-form-group" style="min-width:150px">
+        <label>Hero Text Color</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="color" id="cp_hero_text" value="#ffffff" style="width:40px;height:36px;border:none;background:none;cursor:pointer;padding:0">
+          <span id="cp_hero_text_hex" style="color:#94a3b8;font-size:0.85rem">#ffffff</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="erp-form-group" style="margin-bottom:16px">
+      <label>Currency <span style="color:#64748b;font-size:0.8rem;font-weight:400">(live preview — click Apply below)</span></label>
+      <select class="erp-select" id="cp_currency">
+        <option value="USD">USD ($)</option>
+        <option value="PKR">PKR (Rs)</option>
+        <option value="EUR">EUR (€)</option>
+        <option value="GBP">GBP (£)</option>
+        <option value="AED">AED (د.إ)</option>
+      </select>
+    </div>
+
+
+    <div class="erp-form-group" style="margin-bottom:16px">
+      <label>Hero Layout</label>
+      <select class="erp-select" id="heroLayoutPicker">
+        <option value="image-right">Image Right (text left, bg fills right)</option>
+        <option value="centered">Centered (text centered over full image)</option>
+        <option value="split">Split (text left, image panel right)</option>
+        <option value="image-left">Image Left (text right, image panel left)</option>
+      </select>
+    </div>
+
+
+    <button class="erp-btn erp-btn-primary" id="applyColorsBtn">Apply Colors to Live Preview</button>
+    <button class="erp-btn erp-btn-secondary" id="resetColorsBtn" style="margin-left:10px">Reset to AI Colors</button>
+  </div>
+  <div class="erp-panel" id="resultPanel" style="display:none">
+    <h2>Generated Theme</h2>
+    <p id="genMessage" style="color:#94a3b8;margin-bottom:12px"></p>
+    <div id="result"></div>
+    <div style="margin-top:20px">
+      <h3 style="color:#38bdf8;margin-bottom:12px">Runtime Webpage Preview</h3>
+      <iframe id="livePreview" style="width:100%;height:500px;border:1px solid rgba(56,189,248,0.2);border-radius:12px;background:#fff"></iframe>
+    </div>
+  </div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/theme.js"></script>
+<script>
+
+const user = initERPLayout({ title: "AI Theme Generator", activePage: "owner-theme-generator.html", allowedRoles: ["store_owner"] });
+console.log("initERPLayout returned:", user);
+// const user = initERPLayout({ title: "AI Theme Generator", activePage: "owner-theme-generator.html", allowedRoles: ["store_owner"] });
+
+let currentStoreId = null;
+let initialCurrency = null;
+if (user) {
+  const alertArea = document.getElementById("alertArea");
+
+  getDashboard().then(d => {
+    if (d.success) {
+      currentStoreId = d.store.id;
+      document.getElementById("businessType").value = d.store.business_type || "";
+      document.getElementById("storeName").value = d.store.name || "";
+      document.getElementById("storeCurrency").value = d.store.currency || "USD";
+      document.getElementById("cp_currency").value = d.store.currency || "USD";
+      initialCurrency = d.store.currency || "USD";
+      document.getElementById("storePaymentOptions").value = d.store.payment_options || "cod";
+      document.getElementById("bankTitle").value = d.store.bank_account_title || "";
+      document.getElementById("bankNumber").value = d.store.bank_account_number || "";
+      document.getElementById("bankName").value = d.store.bank_name || "";
+      document.getElementById("bankFields").style.display = (d.store.payment_options && d.store.payment_options !== "cod") ? "block" : "none";
+      document.getElementById("previewBtn").href = `store-live.html?store_id=${currentStoreId}`;
+      document.getElementById("previewBtn").style.display = "inline-flex";
+    }
+  });
+
+  document.getElementById("storePaymentOptions").addEventListener("change", (e) => {
+    document.getElementById("bankFields").style.display = (e.target.value === "cod") ? "none" : "block";
+  });
+
+  document.getElementById("storeCurrency").addEventListener("change", (e) => {
+    const changed = initialCurrency && e.target.value !== initialCurrency;
+    document.getElementById("conversionRateField").style.display = changed ? "block" : "none";
+  });
+
+  document.getElementById("generateBtn").addEventListener("click", async () => {
+    const btn = document.getElementById("generateBtn");
+    btn.disabled = true;
+    btn.textContent = "Generating with AI...";
+
+    const typedName = document.getElementById("storeName").value.trim();
+
+    // Save store name to DB first so it persists on the live store
+    if (currentStoreId && typedName) {
+      const newCurrency = document.getElementById("storeCurrency").value;
+      const rateInput = document.getElementById("conversionRate").value;
+      const payload = {
+        name: typedName,
+        currency: newCurrency,
+        payment_options: document.getElementById("storePaymentOptions").value,
+        bank_account_title: document.getElementById("bankTitle").value,
+        bank_account_number: document.getElementById("bankNumber").value,
+        bank_name: document.getElementById("bankName").value,
+      };
+      if (initialCurrency && newCurrency !== initialCurrency && rateInput) {
+        payload.conversion_rate = parseFloat(rateInput);
+      }
+      const saveRes = await updateStore(currentStoreId, payload);
+      if (!saveRes.success) {
+        showAlert(alertArea, saveRes.message || "Could not save store settings");
+        btn.disabled = false;
+        btn.textContent = "Generate Theme JSON + Apply Template";
+        return;
+      }
+      initialCurrency = newCurrency;
+    }
+
+    const res = await generateTheme({
+      business_type: document.getElementById("businessType").value || "general",
+      hero_layout: document.getElementById("heroLayout").value,
+      store_name: document.getElementById("storeName").value || "",
+      region: document.getElementById("region").value,
+      style: document.getElementById("style").value,
+      aesthetic: document.getElementById("aesthetic").value,
+      store_id: currentStoreId,
+    });
+
+    btn.disabled = false;
+    btn.textContent = "Generate Theme JSON + Apply Template";
+
+    if (res.success) {
+      document.getElementById("resultPanel").style.display = "block";
+      document.getElementById("colorPanel").style.display = "block";
+      document.getElementById("genMessage").textContent = res.message || "Theme saved successfully";
+      renderThemeCards(document.getElementById("result"), [res.data]);
+
+      // Load palette into color swatches
+      const palette = (res.data && res.data.color_palette) || {};
+      loadSwatchesFromPalette(palette);
+      if (res.data && res.data.hero_layout) {
+        const picker = document.getElementById("heroLayoutPicker");
+        if (picker) picker.value = res.data.hero_layout;
+      }
+
+      if (res.preview_url) {
+        const sid = currentStoreId || (res.data && res.data.store_id);
+        if (sid) {
+          currentStoreId = sid;
+          const url = getStoreLiveUrl(sid) + "?t=" + Date.now();
+          document.getElementById("livePreview").src = url;
+          document.getElementById("previewBtn").href = `store-live.html?store_id=${sid}`;
+          document.getElementById("previewBtn").style.display = "inline-flex";
+        }
+      }
+      showAlert(alertArea, res.message || "Theme + webpage ready!", "success");
+    } else {
+      showAlert(alertArea, res.error || res.message || "Generation failed. Ensure you have a store and backend is running.");
+    }
+  });
+
+  // ─── Color swatch panel ──────────────────────────────────────────────────
+  const COLOR_KEYS = ["primary", "secondary", "accent", "background", "text", "hero_text"];
+  let _currentPalette = {};
+
+  function syncSwatchHex(key) {
+    const val = document.getElementById(`cp_${key}`).value;
+    document.getElementById(`cp_${key}_hex`).textContent = val;
+  }
+  COLOR_KEYS.forEach(k => {
+    const inp = document.getElementById(`cp_${k}`);
+    if (inp) inp.addEventListener("input", () => syncSwatchHex(k));
+  });
+
+  function loadSwatchesFromPalette(palette) {
+    _currentPalette = palette || {};
+    ["primary", "secondary", "accent", "background", "text"].forEach(k => {
+      const v = palette[k];
+      if (v && /^#[0-9a-fA-F]{3,6}$/.test(v)) {
+        document.getElementById(`cp_${k}`).value = v;
+        document.getElementById(`cp_${k}_hex`).textContent = v;
+      }
+    });
+  }
+
+function applySwatchesToIframe() {
+    const iframe = document.getElementById("livePreview");
+    if (!iframe || !iframe.contentWindow) return;
+    try {
+      const root = iframe.contentDocument.documentElement;
+      ["primary", "secondary", "accent", "background", "text"].forEach(k => {
+        root.style.setProperty(`--${k === "background" ? "bg" : k}`, document.getElementById(`cp_${k}`).value);
+      });
+
+      ["primary", "secondary", "accent", "background", "text"].forEach(k => {
+        root.style.setProperty(`--${k === "background" ? "bg" : k}`, document.getElementById(`cp_${k}`).value);
+      });
+
+      const newSymbolMap = { USD: "$", PKR: "Rs ", EUR: "€", GBP: "£", AED: "د.إ " };
+      const chosenCurrency = document.getElementById("cp_currency").value;
+      const symbol = newSymbolMap[chosenCurrency] || (chosenCurrency + " ");
+      iframe.contentDocument.querySelectorAll(".tpl-card").forEach(card => {
+        const btn = card.querySelector(".tpl-btn");
+        const priceEl = card.querySelector(".tpl-price");
+        if (btn && priceEl) {
+          const raw = parseFloat(btn.dataset.price) || 0;
+          priceEl.textContent = `${symbol}${raw.toFixed(2)}`;
+        }
+      });
+      document.getElementById("storeCurrency").value = chosenCurrency;
+
+      const heroTextColor = document.getElementById("cp_hero_text").value;
+      const heroEl = iframe.contentDocument.querySelector(".tpl-hero");
+      if (heroEl) {
+        heroEl.querySelectorAll("h1, p, .tag").forEach(el => el.style.color = heroTextColor);
+        const layout = document.getElementById("heroLayoutPicker").value;
+        heroEl.classList.remove("image-right", "image-left", "split", "centered");
+        heroEl.classList.add(layout);
+      }
+    } catch (e) {
+      showAlert(alertArea, "Could not apply colors to preview (cross-origin). Use the live store link to verify.", "");
+    }
+  }
+
+  // if (res.data && res.data.hero_layout) {
+  //   document.getElementById("heroLayoutPicker").value = res.data.hero_layout; 
+  // }
+  document.getElementById("applyColorsBtn").addEventListener("click", applySwatchesToIframe);
+  document.getElementById("resetColorsBtn").addEventListener("click", () => loadSwatchesFromPalette(_currentPalette));
+
+
+}
+</script>
+</body>
+</html>

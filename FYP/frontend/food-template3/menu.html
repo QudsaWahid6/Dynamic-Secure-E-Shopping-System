@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>BurgerRush Menu</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Segoe UI;
+background:#FFF6EE;
+}
+
+/* NAVBAR */
+
+nav{
+background:#ff6b35;
+color:white;
+display:flex;
+justify-content:space-between;
+padding:20px 60px;
+position:sticky;
+top:0;
+}
+
+nav ul{
+display:flex;
+gap:30px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:70px;
+background:linear-gradient(135deg,#ff8c42,#ff5f2e);
+color:white;
+}
+
+.hero h1{
+font-size:55px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:20px;
+}
+
+/* CATEGORY */
+
+.category{
+padding:60px 70px;
+}
+
+.category h2{
+font-size:38px;
+color:#ff5f2e;
+margin-bottom:35px;
+text-align:center;
+}
+
+/* MENU CARDS */
+
+.cards{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:30px;
+}
+
+.card{
+background:white;
+width:290px;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+}
+
+.card img{
+width:100%;
+height:210px;
+object-fit:cover;
+}
+
+.content{
+padding:22px;
+text-align:center;
+}
+
+.content h3{
+margin-bottom:10px;
+}
+
+.price{
+color:#ff5f2e;
+font-size:22px;
+font-weight:bold;
+margin:12px 0;
+}
+
+button{
+background:#ff5f2e;
+color:white;
+border:none;
+padding:12px 22px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#e6501c;
+}
+
+/* DEAL BANNER */
+
+.deal{
+margin:60px auto;
+width:80%;
+background:#1f2937;
+color:white;
+padding:40px;
+border-radius:20px;
+text-align:center;
+}
+
+.deal h2{
+font-size:42px;
+margin-bottom:15px;
+}
+
+/* FOOTER */
+
+footer{
+margin-top:60px;
+background:#1f2937;
+color:white;
+text-align:center;
+padding:35px;
+}
+
+</style>
+
+</head>
+<body>
+
+<nav>
+
+<h2>BurgerRush</h2>
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="#">Menu</a></li>
+<li><a href="feedback.html">Feedback</a></li>
+</ul>
+
+</nav>
+
+<section class="hero">
+
+<h1>Our Delicious Menu</h1>
+
+<p>20+ Fast Food Items Available</p>
+
+</section>
+
+
+<!-- BURGERS -->
+
+<section class="category">
+
+<h2>Signature Burgers</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd">
+<div class="content">
+<h3>Cheese Burger</h3>
+<div class="price">$9</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1550547660-d9450f859349">
+<div class="content">
+<h3>Double Beef Burger</h3>
+<div class="price">$12</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1520072959219-c595dc870360">
+<div class="content">
+<h3>Chicken Burger</h3>
+<div class="price">$10</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add">
+<div class="content">
+<h3>Zinger Burger</h3>
+<div class="price">$11</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- PIZZAS -->
+
+<section class="category">
+
+<h2>Pizzas</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1513104890138-7c749659a591">
+<div class="content">
+<h3>Pepperoni Pizza</h3>
+<div class="price">$14</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1548365328-9f547fb0953b">
+<div class="content">
+<h3>Cheese Lovers</h3>
+<div class="price">$13</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1594007654729-407eedc4be65">
+<div class="content">
+<h3>BBQ Pizza</h3>
+<div class="price">$15</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38">
+<div class="content">
+<h3>Supreme Pizza</h3>
+<div class="price">$17</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- SIDES -->
+
+<section class="category">
+
+<h2>Sides & Snacks</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877">
+<div class="content">
+<h3>Loaded Fries</h3>
+<div class="price">$6</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1562967916-eb82221dfb92">
+<div class="content">
+<h3>Chicken Wings</h3>
+<div class="price">$8</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1606755962773-0f5d5f6b54cb">
+<div class="content">
+<h3>Nuggets</h3>
+<div class="price">$7</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1619531038896-fc2f58e17f79">
+<div class="content">
+<h3>Garlic Bread</h3>
+<div class="price">$5</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- DRINKS -->
+
+<section class="category">
+
+<h2>Drinks & Desserts</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1497534446932-c925b458314e">
+<div class="content">
+<h3>Cold Coffee</h3>
+<div class="price">$4</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1542444459-db63c37bfb09">
+<div class="content">
+<h3>Milkshake</h3>
+<div class="price">$5</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb">
+<div class="content">
+<h3>Chocolate Cake</h3>
+<div class="price">$6</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1551024506-0bccd828d307">
+<div class="content">
+<h3>Ice Cream Sundae</h3>
+<div class="price">$5</div>
+<a href="cart.html"><button>Add To Cart</button></a>
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+
+<div class="deal">
+<h2>Weekend Combo Deal</h2>
+<p>Buy 2 Burgers + Pizza + Drink for only $25</p>
+</div>
+
+
+<footer>
+BurgerRush Dynamic Template Preview
+</footer>
+
+</body>
+</html>

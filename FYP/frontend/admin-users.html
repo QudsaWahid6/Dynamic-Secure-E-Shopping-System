@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Management</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-panel"><h2>All Users</h2><div id="userTable"></div></div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+initERPLayout({ title: "User Management", activePage: "admin-users.html", allowedRoles: ["super_admin"] });
+
+const STATUS_COLORS = {
+  active:   { bg: "#14532d", color: "#86efac" },
+  pending:  { bg: "#713f12", color: "#fde68a" },
+  rejected: { bg: "#7f1d1d", color: "#fca5a5" },
+};
+
+async function loadUsers() {
+  const res = await getAdminUsers();
+  const el = document.getElementById("userTable");
+  if (!res.data?.length) { el.innerHTML = '<div class="erp-empty">No users</div>'; return; }
+
+  el.innerHTML = `<div class="erp-table-wrap"><table class="erp-table">
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead>
+    <tbody>
+      ${res.data.map(u => {
+        const s = u.status || "active";
+        const c = STATUS_COLORS[s] || STATUS_COLORS.active;
+        const statusBadge = `<span style="padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:600;background:${c.bg};color:${c.color}">${s}</span>`;
+
+        const actions = u.role === "super_admin" ? "—" : `
+          <select data-id="${u.id}" data-current="${s}" onchange="changeStatus(this)"
+            style="padding:5px 8px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.8rem;cursor:pointer">
+            <option value="" disabled selected>Change status</option>
+            <option value="active"   ${s==="active"   ? "disabled":""}>✅ Approve</option>
+            <option value="pending"  ${s==="pending"  ? "disabled":""}>⏳ Set pending</option>
+            <option value="rejected" ${s==="rejected" ? "disabled":""}>❌ Reject</option>
+          </select>`;
+
+        return `<tr>
+          <td>${u.name||"—"}</td>
+          <td style="color:#94a3b8;font-size:0.85rem">${u.email}</td>
+          <td><span style="font-size:0.8rem;opacity:0.8">${u.role}</span></td>
+          <td>${statusBadge}</td>
+          <td style="font-size:0.82rem;color:#64748b">${formatDate(u.created_at)}</td>
+          <td>${actions}</td>
+        </tr>`;
+      }).join("")}
+    </tbody></table></div>`;
+}
+
+async function changeStatus(selectEl) {
+  const newStatus = selectEl.value;
+  const userId = selectEl.getAttribute("data-id");
+  if (!newStatus || !userId) return;
+
+  selectEl.disabled = true;
+  const res = await apiRequest(`/admin/users/${userId}/status`, "PATCH", { status: newStatus });
+
+  if (res.success) {
+    loadUsers();
+  } else {
+    alert(res.error || res.message || "Failed to update status");
+    selectEl.disabled = false;
+    selectEl.value = "";
+  }
+}
+
+loadUsers();
+</script>
+</body>
+</html>

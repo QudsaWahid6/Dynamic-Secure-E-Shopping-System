@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory - Store Owner</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-grid">
+    <div class="erp-card"><h3>Total SKUs</h3><div class="value" id="sTotal">—</div></div>
+    <div class="erp-card"><h3>In Stock</h3><div class="value" id="sIn">—</div></div>
+    <div class="erp-card"><h3>Low Stock</h3><div class="value" id="sLow">—</div></div>
+    <div class="erp-card"><h3>Out of Stock</h3><div class="value" id="sOut">—</div></div>
+  </div>
+  <div class="erp-panel"><h2>Low Stock Alert</h2><div id="lowStock"></div></div>
+  <div class="erp-panel"><h2>Out of Stock</h2><div id="outStock"></div></div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+const user = initERPLayout({ title: "Inventory", activePage: "owner-inventory.html", allowedRoles: ["store_owner"] });
+if (user) {
+  getInventory().then(res => {
+    if (!res.success) return;
+    document.getElementById("sTotal").textContent = res.stats.total;
+    document.getElementById("sIn").textContent = res.stats.in_stock;
+    document.getElementById("sLow").textContent = res.stats.low_stock;
+    document.getElementById("sOut").textContent = res.stats.out_of_stock;
+    const lowEl = document.getElementById("lowStock");
+    const outEl = document.getElementById("outStock");
+    lowEl.innerHTML = res.low_stock.length ? res.low_stock.map(p => `<p>${p.name} — ${p.stock} left</p>`).join("") : '<div class="erp-empty">No low stock items</div>';
+    outEl.innerHTML = res.out_of_stock.length ? res.out_of_stock.map(p => `<p>${p.name}</p>`).join("") : '<div class="erp-empty">All items in stock</div>';
+  });
+}
+</script>
+</body>
+</html>

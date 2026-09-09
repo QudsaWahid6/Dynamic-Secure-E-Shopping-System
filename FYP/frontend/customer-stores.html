@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store Discovery</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-panel"><h2>Discover Stores</h2><div id="stores"></div></div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+initERPLayout({ title: "Store Discovery", activePage: "customer-stores.html", allowedRoles: ["customer"] });
+getStores().then(res => {
+  const el = document.getElementById("stores");
+  if (!res.data?.length) { el.innerHTML = '<div class="erp-empty">No stores available</div>'; return; }
+  el.innerHTML = res.data.map(s => `
+    <div class="erp-card" style="margin-bottom:12px;cursor:pointer;transition:.2s"
+         onclick="window.open(getStoreLiveUrl('${s.id}'), '_blank')"
+         onmouseenter="this.style.borderColor='rgba(56,189,248,0.5)'"
+         onmouseleave="this.style.borderColor=''">
+      <h3 style="color:#38bdf8">${s.name}</h3>
+      <p style="color:#94a3b8;font-size:0.85rem">${s.business_type||""} · ${s.region||"Global"}</p>
+      <p style="color:#64748b;font-size:0.78rem;margin-top:6px">Click to open store ↗</p>
+    </div>
+  `).join("");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CraftHome Products</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Segoe UI;
+background:#f2f2f2;
+}
+
+/* NAVBAR */
+
+nav{
+background:#2b2b2b;
+color:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+nav h2{
+color:#e0e0e0;
+font-size:30px;
+}
+
+nav ul{
+display:flex;
+gap:30px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+nav a:hover{
+color:#aaaaaa;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:80px 20px;
+background:linear-gradient(135deg,#1a1a1a,#4a4a4a);
+color:white;
+}
+
+.hero h1{
+font-size:60px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:20px;
+color:#cccccc;
+}
+
+/* CATEGORY */
+
+.category{
+padding:70px;
+}
+
+.category h2{
+text-align:center;
+font-size:42px;
+margin-bottom:40px;
+color:#1a1a1a;
+}
+
+/* CARDS */
+
+.cards{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+}
+
+.card{
+background:white;
+width:290px;
+border-radius:22px;
+overflow:hidden;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+}
+
+.card img{
+width:100%;
+height:220px;
+object-fit:cover;
+}
+
+.content{
+padding:22px;
+text-align:center;
+}
+
+.content h3{
+margin-bottom:10px;
+color:#1a1a1a;
+font-size:26px;
+}
+
+.content p{
+color:#666;
+margin-bottom:12px;
+}
+
+.price{
+font-size:24px;
+font-weight:bold;
+color:#555555;
+margin-bottom:18px;
+}
+
+button{
+background:#2b2b2b;
+color:white;
+border:none;
+padding:13px 24px;
+border-radius:12px;
+cursor:pointer;
+font-weight:bold;
+font-size:15px;
+transition:.3s;
+}
+
+button:hover{
+background:#555555;
+}
+
+/* DESCRIPTION SECTION */
+
+.deal{
+width:85%;
+margin:60px auto;
+background:#2b2b2b;
+color:white;
+padding:45px;
+border-radius:25px;
+text-align:center;
+}
+
+.deal h2{
+font-size:42px;
+margin-bottom:15px;
+color:#e0e0e0;
+}
+
+.deal p{
+font-size:18px;
+}
+
+/* FOOTER */
+
+footer{
+background:#1a1a1a;
+color:white;
+text-align:center;
+padding:35px;
+margin-top:70px;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- NAVBAR -->
+
+<nav>
+
+<h2>🪑 CraftHome</h2>
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="#">Products</a></li>
+<li><a href="feedback.html">Feedback</a></li>
+</ul>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<h1>Luxury Furniture Collection</h1>
+
+<p>
+Explore modern furniture crafted for elegant homes
+</p>
+
+</section>
+
+<!-- SOFAS -->
+
+<section class="category">
+
+<h2>Luxury Sofas</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80" alt="Modern Sofa">
+<div class="content">
+<h3>Modern Sofa</h3>
+<p>Comfortable premium fabric sofa</p>
+<div class="price">$450</div>
+<button onclick="addToCart('Modern Sofa',450)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1200&q=80" alt="Luxury Sofa">
+<div class="content">
+<h3>Luxury Sofa</h3>
+<p>Elegant beige luxury sofa</p>
+<div class="price">$520</div>
+<button onclick="addToCart('Luxury Sofa',520)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1540574163026-643ea20ade25?auto=format&fit=crop&w=1200&q=80" alt="Minimal Sofa">
+<div class="content">
+<h3>Minimal Sofa</h3>
+<p>Modern minimalist sofa design</p>
+<div class="price">$390</div>
+<button onclick="addToCart('Minimal Sofa',390)">
+Add To Cart
+</button>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- BEDS -->
+
+<section class="category">
+
+<h2>Luxury Beds</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1000&q=80" alt="King Size Bed">
+<div class="content">
+<h3>King Size Bed</h3>
+<p>Modern wooden king size bed</p>
+<div class="price">$780</div>
+<button onclick="addToCart('King Size Bed',780)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=1000&q=80" alt="Luxury Bed">
+<div class="content">
+<h3>Luxury Bed</h3>
+<p>Premium upholstered bedroom setup</p>
+<div class="price">$920</div>
+<button onclick="addToCart('Luxury Bed',920)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=1000&q=80" alt="Minimal Bed">
+<div class="content">
+<h3>Minimal Bed</h3>
+<p>Simple Scandinavian bed style</p>
+<div class="price">$650</div>
+<button onclick="addToCart('Minimal Bed',650)">
+Add To Cart
+</button>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- DINING TABLES -->
+
+<section class="category">
+
+<h2>Dining Tables</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1000&q=80" alt="Wood Dining Table">
+<div class="content">
+<h3>Wood Dining Table</h3>
+<p>Premium solid wood dining set</p>
+<div class="price">$620</div>
+<button onclick="addToCart('Wood Dining Table',620)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1526125592613-ba8e9ce7d68d?auto=format&fit=crop&w=1000&q=80" alt="Luxury Dining Set">
+<div class="content">
+<h3>Luxury Dining Set</h3>
+<p>Elegant family dining table setup</p>
+<div class="price">$880</div>
+<button onclick="addToCart('Luxury Dining Set',880)">
+Add To Cart
+</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&w=1000&q=80" alt="Minimal Dining Table">
+<div class="content">
+<h3>Minimal Dining Table</h3>
+<p>Modern apartment dining table</p>
+<div class="price">$540</div>
+<button onclick="addToCart('Minimal Dining Table',540)">
+Add To Cart
+</button>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- DESCRIPTION -->
+
+<div class="deal">
+
+<h2>🪵 Why Choose CraftHome Furniture?</h2>
+
+<p>
+At CraftHome, every piece of furniture is crafted with the finest quality wood and premium fabrics, designed to bring elegance, comfort, and warmth to your home. From luxurious sofas to stunning dining sets and cozy beds — our furniture is built to last generations. We believe your home deserves the best, and we deliver nothing less.
+</p>
+
+</div>
+
+<footer>
+
+CraftHome Dynamic Furniture Template
+
+</footer>
+
+<script>
+
+function addToCart(name,price){
+
+let cart =
+JSON.parse(localStorage.getItem("cart"))
+|| [];
+
+cart.push({
+name:name,
+price:price
+});
+
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+);
+
+window.location.href="cart.html";
+
+}
+
+</script>
+
+</body>
+</html>

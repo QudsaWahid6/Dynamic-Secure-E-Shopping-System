@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DesiZaika Feedback</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Segoe UI;
+background:#fff8f3;
+}
+
+/* NAVBAR */
+
+nav{
+background:#4b1d0f;
+color:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+}
+
+nav h2{
+color:#ffcf9c;
+}
+
+nav ul{
+display:flex;
+gap:30px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+nav a:hover{
+color:#ffcf9c;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:75px;
+background:linear-gradient(135deg,#7a2f16,#c46b32);
+color:white;
+}
+
+.hero h1{
+font-size:55px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:20px;
+opacity:.9;
+}
+
+/* FEEDBACK CONTAINER */
+
+.feedback-container{
+width:85%;
+margin:60px auto;
+display:flex;
+gap:35px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+/* LEFT BOX */
+
+.feedback-box{
+background:white;
+width:650px;
+padding:40px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+.feedback-box h2{
+font-size:35px;
+margin-bottom:30px;
+color:#7a2f16;
+}
+
+/* INPUTS */
+
+.input-group{
+margin-bottom:22px;
+}
+
+.input-group label{
+display:block;
+margin-bottom:10px;
+font-weight:bold;
+color:#4b1d0f;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select{
+width:100%;
+padding:15px;
+border:1px solid #ddd;
+border-radius:12px;
+font-size:16px;
+outline:none;
+}
+
+.input-group textarea{
+height:150px;
+resize:none;
+}
+
+/* STAR RATING */
+
+.rating{
+margin:20px 0;
+font-size:35px;
+color:#ffb703;
+cursor:pointer;
+}
+
+/* BUTTON */
+
+.submit-btn{
+width:100%;
+margin-top:20px;
+background:#7a2f16;
+color:white;
+border:none;
+padding:17px;
+font-size:18px;
+font-weight:bold;
+border-radius:14px;
+cursor:pointer;
+transition:.3s;
+}
+
+.submit-btn:hover{
+background:#c46b32;
+}
+
+/* SUCCESS */
+
+.success{
+display:none;
+margin-top:25px;
+background:#e8ffe8;
+color:#1f7a1f;
+padding:18px;
+border-radius:12px;
+font-weight:bold;
+text-align:center;
+}
+
+/* REVIEW CARDS */
+
+.review-section{
+background:white;
+width:320px;
+padding:35px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+height:fit-content;
+}
+
+.review-section h2{
+color:#7a2f16;
+margin-bottom:25px;
+}
+
+.review{
+background:#fff3db;
+padding:18px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.review h3{
+color:#7a2f16;
+margin-bottom:8px;
+}
+
+.review p{
+color:#555;
+font-size:15px;
+}
+
+/* FOOTER */
+
+footer{
+margin-top:70px;
+background:#2d1209;
+color:white;
+text-align:center;
+padding:35px;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- NAVBAR -->
+
+<nav>
+
+<h2>🍛 DesiZaika</h2>
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="menu.html">Menu</a></li>
+<li><a href="#">Feedback</a></li>
+</ul>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<h1>Customer Feedback</h1>
+
+<p>
+Share your experience with our desi restaurant template
+</p>
+
+</section>
+
+<!-- FEEDBACK SECTION -->
+
+<div class="feedback-container">
+
+<!-- LEFT SIDE -->
+
+<div class="feedback-box">
+
+<h2>Leave A Review</h2>
+
+<form onsubmit="submitFeedback(event)">
+
+<div class="input-group">
+<label>Your Name</label>
+<input type="text" required>
+</div>
+
+<div class="input-group">
+<label>Email Address</label>
+<input type="email" required>
+</div>
+
+<div class="input-group">
+<label>Rate Your Experience</label>
+
+<div class="rating">
+⭐ ⭐ ⭐ ⭐ ⭐
+</div>
+
+</div>
+
+<div class="input-group">
+<label>Your Feedback</label>
+
+<textarea placeholder="Write your review here..." required></textarea>
+
+</div>
+
+<button class="submit-btn">
+Submit Feedback
+</button>
+
+</form>
+
+<div class="success" id="successMessage">
+✅ Thank you! Your feedback has been submitted successfully.
+</div>
+
+</div>
+
+<!-- RIGHT SIDE -->
+
+<div class="review-section">
+
+<h2>Recent Reviews</h2>
+
+<div class="review">
+<h3>Ali Khan ⭐⭐⭐⭐⭐</h3>
+<p>
+Amazing desi food template. Professional and clean design.
+</p>
+</div>
+
+<div class="review">
+<h3>Sara Ahmed ⭐⭐⭐⭐</h3>
+<p>
+Loved the colors and smooth navigation experience.
+</p>
+</div>
+
+<div class="review">
+<h3>Hamza ⭐⭐⭐⭐⭐</h3>
+<p>
+Perfect restaurant website preview with modern styling.
+</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+
+DesiZaika Dynamic Restaurant Template
+
+</footer>
+
+<script>
+
+function submitFeedback(event){
+
+event.preventDefault();
+
+document.getElementById(
+"successMessage"
+).style.display="block";
+
+}
+
+</script>
+
+</body>
+</html>

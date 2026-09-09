@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity Logs</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+
+<div id="page-root">
+  <div class="erp-panel"><h2>Security Chain Integrity</h2>
+    <button class="erp-btn erp-btn-secondary" id="verifyChainBtn">Verify Chain</button>
+    <button class="erp-btn" style="background:#dc2626;color:#fff" id="clearLogsBtn">Clear All Logs</button>
+    <p id="chainResult" style="margin-top:10px"></p>
+  </div>
+  <div class="erp-panel"><h2>Recent Orders</h2><div id="orders"></div></div>
+  <div class="erp-panel"><h2>Recent Stores</h2><div id="stores"></div></div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+initERPLayout({ title: "Activity Logs", activePage: "admin-activity.html", allowedRoles: ["super_admin"] });
+getAdminActivity().then(res => {
+  const o = document.getElementById("orders");
+  const s = document.getElementById("stores");
+  o.innerHTML = res.recent_orders?.length ? res.recent_orders.map(x => `<p>Order #${String(x.id).slice(0,8)} — ${statusBadge(x.status)} — ${formatPrice(x.total_amount)}</p>`).join("") : '<div class="erp-empty">No recent orders</div>';
+  s.innerHTML = res.recent_stores?.length ? res.recent_stores.map(x => `<p>${x.name} — ${formatDate(x.created_at)}</p>`).join("") : '<div class="erp-empty">No recent stores</div>';
+});
+
+document.getElementById("verifyChainBtn").addEventListener("click", async () => {
+  const res = await apiRequest("/verify-chain", "GET");
+  const el = document.getElementById("chainResult");
+  el.textContent = res.message;
+  el.style.color = res.success ? "#22c55e" : "#ef4444";
+});
+document.getElementById("clearLogsBtn").addEventListener("click", async () => {
+  const confirmed = confirm("This will permanently delete ALL security logs. This cannot be undone. Continue?");
+  if (!confirmed) return;
+
+  const typed = prompt('Type "DELETE" to confirm:');
+  if (typed !== "DELETE") {
+    alert("Cancelled — confirmation text didn't match.");
+    return;
+  }
+
+  const res = await apiRequest("/admin/clear-logs", "POST");
+  const el = document.getElementById("chainResult");
+  el.textContent = res.message;
+  el.style.color = res.success ? "#22c55e" : "#ef4444";
+});
+</script>
+</body>
+</html>

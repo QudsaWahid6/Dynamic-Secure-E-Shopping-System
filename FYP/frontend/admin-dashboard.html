@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - ERP Commerce</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-grid" id="statsGrid">
+    <div class="erp-card"><h3>Users</h3><div class="value" id="statUsers">—</div></div>
+    <div class="erp-card"><h3>Stores</h3><div class="value" id="statStores">—</div></div>
+    <div class="erp-card"><h3>Products</h3><div class="value" id="statProducts">—</div></div>
+    <div class="erp-card"><h3>Orders</h3><div class="value" id="statOrders">—</div></div>
+    <div class="erp-card"><h3>Themes</h3><div class="value" id="statThemes">—</div></div>
+  </div>
+  <div class="erp-panel">
+    <h2>Platform Overview</h2>
+    <canvas id="overviewChart" height="90"></canvas>
+  </div>
+  <div class="erp-panel">
+    <h2>Quick Actions</h2>
+    <<div style="display:flex;gap:12px;flex-wrap:wrap">
+      <a href="admin-users.html" class="erp-btn erp-btn-primary">Manage Users</a>
+      <a href="admin-stores.html" class="erp-btn erp-btn-secondary">Manage Stores</a>
+      <a href="admin-themes.html" class="erp-btn erp-btn-secondary">Theme Analytics</a>
+      <a href="admin-analytics.html" class="erp-btn erp-btn-secondary">System Analytics</a>
+      <a href="admin-pending.html" class="erp-btn" style="background:#b45309;color:#fff">⏳ Pending Approvals</a>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+const user = initERPLayout({ title: "Admin Dashboard", activePage: "admin-dashboard.html", allowedRoles: ["super_admin"] });
+if (user) {
+  getAdminStats().then(res => {
+    if (res.success && res.stats) {
+      document.getElementById("statUsers").textContent = res.stats.users;
+      document.getElementById("statStores").textContent = res.stats.stores;
+      document.getElementById("statProducts").textContent = res.stats.products;
+      document.getElementById("statOrders").textContent = res.stats.orders;
+      document.getElementById("statThemes").textContent = res.stats.themes;
+
+      const labels = ["Users", "Stores", "Products", "Orders", "Themes"];
+      const values = [
+        res.stats.users, res.stats.stores, res.stats.products,
+        res.stats.orders, res.stats.themes
+      ];
+      new Chart(document.getElementById("overviewChart"), {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            label: "Platform Totals",
+            data: values,
+            backgroundColor: ["#38bdf8","#34d399","#facc15","#f87171","#a78bfa"],
+            borderRadius: 8,
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.05)" } },
+            y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.05)" }, beginAtZero: true }
+          }
+        }
+      });
+    }
+  });
+}
+</script>
+</body>
+</html>

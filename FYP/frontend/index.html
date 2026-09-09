@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI-Powered Dynamic E-Commerce ERP</title>
+<link rel="stylesheet" href="css/erp.css">
+<link rel="stylesheet" href="css/public-nav.css">
+<style>
+.landing-nav .logo{font-size:1.4rem}
+.landing-hero{padding:100px 60px;text-align:center;max-width:900px;margin:0 auto}
+.landing-hero h1{font-size:3.2rem;line-height:1.2;margin-bottom:20px;background:linear-gradient(90deg,#fff,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.landing-hero p{font-size:1.15rem;color:#94a3b8;line-height:1.8;margin-bottom:32px}
+.landing-section{padding:80px 60px;border-top:1px solid rgba(56,189,248,.08)}
+.landing-section h2{text-align:center;font-size:2rem;color:#38bdf8;margin-bottom:12px}
+.landing-section .sub{text-align:center;color:#94a3b8;margin-bottom:40px}
+.landing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;max-width:1100px;margin:0 auto}
+.landing-card{background:rgba(17,24,39,.9);border:1px solid rgba(56,189,248,.15);border-radius:16px;padding:28px;transition:.3s}
+.landing-card:hover{transform:translateY(-6px);border-color:rgba(56,189,248,.35)}
+.landing-card h3{color:#38bdf8;margin-bottom:10px}
+.landing-card p{color:#94a3b8;line-height:1.6;font-size:.95rem}
+.theme-showcase{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;max-width:1000px;margin:0 auto}
+.theme-chip{padding:24px 32px;border-radius:14px;font-weight:600;min-width:180px;text-align:center}
+.footer{text-align:center;padding:30px;color:#64748b;border-top:1px solid rgba(56,189,248,.1)}
+@media(max-width:768px){.landing-hero h1{font-size:2.2rem}.landing-section,.landing-hero{padding:50px 24px}}
+</style>
+</head>
+<body class="erp-body">
+
+<nav class="landing-nav">
+  <a href="index.html" class="logo">ERP Commerce AI</a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="#features">Features</a>
+    <a href="#ai">AI Themes</a>
+    <a href="#showcase">Showcase</a>
+    <a href="login.html">Login</a>
+    <a href="register.html" class="nav-cta">Register</a>
+  </div>
+</nav>
+
+<section class="landing-hero">
+  <h1>AI-Powered Dynamic E-Commerce ERP</h1>
+  <p>A multi-tenant SaaS platform where businesses create AI-generated online stores with regional, traditional, and modern theme personalization.</p>
+  <a href="register.html" class="erp-btn erp-btn-primary" style="padding:14px 32px;font-size:1rem;text-decoration:none">Start Free</a>
+  <a href="login.html" class="erp-btn erp-btn-secondary" style="padding:14px 32px;font-size:1rem;text-decoration:none;margin-left:12px">Login</a>
+</section>
+
+<section id="features" class="landing-section">
+  <h2>Platform Features</h2>
+  <p class="sub">Enterprise-grade tools for admins, store owners, and customers</p>
+  <div class="landing-grid">
+    <div class="landing-card"><h3>Multi-Tenant ERP</h3><p>Multiple businesses run independent stores on one platform with role-based access control.</p></div>
+    <div class="landing-card"><h3>AI Theme Engine</h3><p>Gemini-powered themes adapt to category, region, culture, and aesthetic preferences.</p></div>
+    <div class="landing-card"><h3>Full Commerce Stack</h3><p>Products, orders, inventory, wishlists, and analytics — all integrated with Supabase.</p></div>
+    <div class="landing-card"><h3>Reusable Themes</h3><p>Generated themes are saved to your library and can be reapplied anytime.</p></div>
+  </div>
+</section>
+
+<section id="ai" class="landing-section" style="background:rgba(17,24,39,.5)">
+  <h2>AI Theme Generation</h2>
+  <p class="sub">Dynamic UI generation based on your business context</p>
+  <div class="landing-grid">
+    <div class="landing-card"><h3>Regional Personalization</h3><p>Themes adapt to Pakistan, Middle East, Europe, USA and more — colors, layout, and typography tuned to local preferences.</p></div>
+    <div class="landing-card"><h3>Style Categories</h3><p>Choose traditional, modern, luxury, minimal, or aesthetic styles. AI merges your choices into a cohesive design system.</p></div>
+    <div class="landing-card"><h3>Saved & Reusable</h3><p>Every generated theme is stored in <code>generated_themes</code> and available in your Theme Library.</p></div>
+  </div>
+</section>
+
+<section id="showcase" class="landing-section">
+  <h2>Theme Style Showcase</h2>
+  <p class="sub">Examples of theme categories supported by the platform</p>
+  <div class="theme-showcase">
+    <div class="theme-chip" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff">Modern</div>
+    <div class="theme-chip" style="background:linear-gradient(135deg,#78350f,#d97706);color:#fff">Traditional</div>
+    <div class="theme-chip" style="background:linear-gradient(135deg,#1c1917,#a8a29e);color:#fff">Luxury</div>
+    <div class="theme-chip" style="background:linear-gradient(135deg,#f8fafc,#e2e8f0);color:#1e293b">Minimal</div>
+    <div class="theme-chip" style="background:linear-gradient(135deg,#831843,#ec4899);color:#fff">Aesthetic</div>
+    <div class="theme-chip" style="background:linear-gradient(135deg,#14532d,#22c55e);color:#fff">Regional</div>
+  </div>
+  <p style="text-align:center;margin-top:40px;color:#94a3b8">Explore prebuilt store templates after registration</p>
+  <div style="text-align:center;margin-top:16px">
+    <a href="food-template1/index.html" class="erp-btn erp-btn-secondary" target="_blank">Food Store Demo</a>
+    <a href="furniture-template1/index.html" class="erp-btn erp-btn-secondary" target="_blank" style="margin-left:10px">Furniture Demo</a>
+  </div>
+</section>
+
+<section class="landing-section" style="background:rgba(17,24,39,.5)">
+  <h2>Built For Every Role</h2>
+  <p class="sub">Automatic role-based dashboards after login</p>
+  <div class="landing-grid">
+    <div class="landing-card"><h3>Super Admin</h3><p>Manage users, stores, platform analytics, theme insights, and activity logs.</p></div>
+    <div class="landing-card"><h3>Store Owner</h3><p>Products, orders, inventory, AI theme generator, and store analytics.</p></div>
+    <div class="landing-card"><h3>Customer</h3><p>Discover stores, shop, track orders, manage cart and wishlist.</p></div>
+  </div>
+</section>
+
+<div class="footer">
+  <p>AI-Powered Dynamic E-Commerce ERP — FYP Project 2026</p>
+  <p style="margin-top:8px;font-size:0.85rem">Flask · Supabase · JWT · Gemini AI</p>
+</div>
+
+</body>
+</html>

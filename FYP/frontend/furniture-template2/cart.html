@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CraftHome Cart</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Segoe UI;
+background:#f2f2f2;
+}
+
+/* NAVBAR */
+
+nav{
+background:#2b2b2b;
+color:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+}
+
+nav h2{
+color:#e0e0e0;
+font-size:30px;
+}
+
+nav ul{
+display:flex;
+gap:30px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+nav a:hover{
+color:#aaaaaa;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:70px 20px;
+background:linear-gradient(135deg,#1a1a1a,#4a4a4a);
+color:white;
+}
+
+.hero h1{
+font-size:58px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:20px;
+color:#cccccc;
+}
+
+/* CART */
+
+.cart-container{
+width:88%;
+margin:60px auto;
+display:flex;
+gap:30px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+/* LEFT SIDE */
+
+.cart-box{
+background:white;
+width:720px;
+padding:35px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+.cart-title{
+font-size:36px;
+color:#1a1a1a;
+margin-bottom:30px;
+}
+
+.empty-cart{
+text-align:center;
+padding:60px;
+color:#777;
+font-size:20px;
+}
+
+/* ITEM */
+
+.item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 0;
+border-bottom:1px solid #eee;
+gap:20px;
+}
+
+.item-left{
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+.item img{
+width:120px;
+height:95px;
+object-fit:cover;
+border-radius:15px;
+}
+
+.item h3{
+color:#1a1a1a;
+margin-bottom:8px;
+}
+
+.item p{
+color:#777;
+}
+
+.price{
+font-size:24px;
+font-weight:bold;
+color:#555555;
+margin-bottom:12px;
+}
+
+.remove{
+background:#e8e8e8;
+color:#1a1a1a;
+border:none;
+padding:10px 16px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.remove:hover{
+background:#cccccc;
+}
+
+/* SUMMARY */
+
+.summary{
+background:white;
+width:320px;
+padding:35px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+height:fit-content;
+}
+
+.summary h2{
+color:#1a1a1a;
+margin-bottom:25px;
+}
+
+.summary-item{
+display:flex;
+justify-content:space-between;
+margin:16px 0;
+font-size:18px;
+}
+
+.total{
+font-size:30px;
+font-weight:bold;
+color:#555555;
+margin-top:25px;
+}
+
+.checkout-btn{
+display:block;
+margin-top:30px;
+background:#2b2b2b;
+color:white;
+text-align:center;
+padding:16px;
+border-radius:14px;
+text-decoration:none;
+font-size:18px;
+font-weight:bold;
+transition:.3s;
+}
+
+.checkout-btn:hover{
+background:#555555;
+}
+
+/* OFFER */
+
+.offer{
+margin-top:30px;
+background:#eeeeee;
+padding:18px;
+border-radius:15px;
+color:#1a1a1a;
+font-weight:bold;
+text-align:center;
+}
+
+/* FOOTER */
+
+footer{
+margin-top:70px;
+background:#1a1a1a;
+color:white;
+text-align:center;
+padding:35px;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- NAVBAR -->
+
+<nav>
+
+<h2>🪑 CraftHome</h2>
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="menu.html">Products</a></li>
+<li><a href="feedback.html">Feedback</a></li>
+</ul>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<h1>Your Furniture Cart</h1>
+
+<p>
+Review your selected luxury furniture items
+</p>
+
+</section>
+
+<!-- CART -->
+
+<div class="cart-container">
+
+<!-- LEFT SIDE -->
+
+<div class="cart-box">
+
+<h2 class="cart-title">
+Selected Furniture
+</h2>
+
+<div id="cartItems">
+
+</div>
+
+</div>
+
+<!-- SUMMARY -->
+
+<div class="summary">
+
+<h2>Order Summary</h2>
+
+<div class="summary-item">
+<span>Delivery</span>
+<span>$50</span>
+</div>
+
+<div class="summary-item">
+<span>Assembly</span>
+<span>$30</span>
+</div>
+
+<div class="total" id="totalPrice">
+Total: $0
+</div>
+
+<a href="checkout.html" class="checkout-btn">
+Proceed To Checkout
+</a>
+
+<div class="offer">
+✨ Free Interior Consultation Above $2000
+</div>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+
+CraftHome Dynamic Furniture Template
+
+</footer>
+
+<script>
+
+let cart =
+JSON.parse(localStorage.getItem("cart"))
+|| [];
+
+let cartItems =
+document.getElementById("cartItems");
+
+let total = 0;
+
+if(cart.length==0){
+
+cartItems.innerHTML =
+"<div class='empty-cart'>No furniture added yet 🪑</div>";
+
+}
+
+else{
+
+cart.forEach((item,index)=>{
+
+total += item.price;
+
+cartItems.innerHTML += `
+
+<div class="item">
+
+<div class="item-left">
+
+<img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80">
+
+<div>
+
+<h3>${item.name}</h3>
+
+<p>Premium luxury furniture item</p>
+
+</div>
+
+</div>
+
+<div>
+
+<div class="price">
+$${item.price}
+</div>
+
+<button class="remove"
+onclick="removeItem(${index})">
+Remove
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+total += 80;
+
+document.getElementById(
+"totalPrice"
+).innerHTML =
+"Total: $" + total;
+
+function removeItem(index){
+
+cart.splice(index,1);
+
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+);
+
+location.reload();
+
+}
+
+</script>
+
+</body>
+</html>

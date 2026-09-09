@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Orders</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-panel"><h2>Order History</h2><div id="orderTable"></div></div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/orders.js"></script>
+<script>
+initERPLayout({ title: "My Orders", activePage: "customer-orders.html", allowedRoles: ["customer"] });
+
+getOrders().then(res => {
+  const orders = res.data || [];
+  const el = document.getElementById("orderTable");
+  if (!orders.length) { el.innerHTML = '<div class="erp-empty">No orders yet</div>'; return; }
+
+  const groups = {};
+  orders.forEach(o => {
+    const key = o.order_group_id || o.id;
+    (groups[key] = groups[key] || []).push(o);
+  });
+
+  el.innerHTML = Object.values(groups).map(group => {
+    const combinedTotal = group.reduce((s, o) => s + Number(o.total_amount || 0), 0);
+    const multiStore = group.length > 1;
+    return `
+    <div class="erp-card" style="margin-bottom:14px">
+      ${multiStore ? `<div style="font-size:0.8rem;color:#38bdf8;margin-bottom:6px">📦 Split into ${group.length} orders across ${group.length} stores — Total: $${combinedTotal.toFixed(2)}</div>` : ""}
+      ${group.map(o => `
+        <div style="border-top:${multiStore ? "1px solid rgba(255,255,255,0.07)" : "none"};padding-top:${multiStore ? "8px" : "0"};margin-top:${multiStore ? "8px" : "0"}">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-weight:600;color:#38bdf8">#${o.id.slice(0,8)}</span>
+            <span style="font-size:0.8rem;padding:3px 10px;border-radius:20px;background:${
+              o.status==='delivered'?'#16a34a':o.status==='shipped'?'#0369a1':o.status==='cancelled'?'#6b7280':'#b45309'
+            };color:#fff">${o.status||'pending'}</span>
+          </div>
+          <div style="color:#94a3b8;font-size:0.85rem;margin-top:6px">${new Date(o.created_at).toLocaleDateString()} · $${Number(o.total_amount||0).toFixed(2)}</div>
+          <div style="font-size:0.78rem;margin-top:4px;color:${o.payment_method==='online'?'#38bdf8':'#94a3b8'}">${o.payment_method==='online' ? '💳 Online Payment' + (o.receipt_image_url ? '' : ' (receipt missing)') : '💵 Cash on Delivery'}</div>
+          ${(o.items||[]).map(i=>`
+            <div style="font-size:0.82rem;color:#cbd5e1;margin-top:4px">• ${(i.products&&i.products.name)||'Item'} × ${i.quantity}</div>
+          `).join('')}
+          <button class="erp-btn erp-btn-sm erp-btn-secondary" style="margin-top:8px" onclick="window.open('customer-receipt.html?order_id=${o.id}','_blank')">🧾 View Receipt</button>
+        </div>
+      `).join('')}
+    </div>`;
+  }).join('');
+});
+</script>
+</body>
+</html>

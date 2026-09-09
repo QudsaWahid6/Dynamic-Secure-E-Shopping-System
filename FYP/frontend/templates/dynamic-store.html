@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #06b6d4;
+      --accent: #38bdf8;
+      --bg: #0f172a;
+      --text: #f1f5f9;
+      --surface: #1e293b;
+      --hero-bg: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=80');
+      --hero-overlay: 0.5;
+      --card-radius: 16px;
+      --font: 'Poppins', 'Segoe UI', sans-serif;
+      --hero-text: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    .tpl-badge {
+      text-align: center; padding: 8px; font-size: 0.8rem; font-weight: 600;
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #fff;
+    }
+
+    .tpl-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 5%; position: sticky; top: 0; z-index: 50;
+      transition: background 0.3s, backdrop-filter 0.3s;
+    }
+    .tpl-nav.glass { background: rgba(0,0,0,0.35); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .tpl-nav.solid { background: var(--surface); border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .tpl-nav.minimal { background: transparent; }
+    .tpl-nav .logo { font-size: 1.35rem; font-weight: 700; color: var(--accent); }
+    .tpl-nav ul { display: flex; gap: 24px; list-style: none; }
+    .tpl-nav a { color: var(--text); text-decoration: none; opacity: 0.9; font-weight: 500; }
+    .tpl-nav a:hover { color: var(--accent); }
+
+    .tpl-hero { min-height: 420px; display: flex; align-items: center; padding: 60px 5%; }
+    /* image-right: full bg image, text left aligned on top of it */
+    .tpl-hero.image-right {
+      background: linear-gradient(90deg, rgba(0,0,0,calc(var(--hero-overlay) + 0.2)) 0%, rgba(0,0,0,var(--hero-overlay)) 30%, rgba(0,0,0,0.05) 75%), var(--hero-bg);
+      background-size: cover; background-position: center;
+    }
+    .tpl-hero.image-right .tpl-hero-image { display: none; }
+
+    /* centered: full bg image, text centered on top */
+    .tpl-hero.centered {
+      background: radial-gradient(ellipse 700px 420px at center, rgba(0,0,0,calc(var(--hero-overlay) + 0.15)) 0%, rgba(0,0,0,0.05) 75%), var(--hero-bg);
+      background-size: cover; background-position: center; justify-content: center; text-align: center;
+    }
+    .tpl-hero.centered .tpl-hero-inner { max-width: 560px; }
+    .tpl-hero.centered .tpl-hero-image { display: none; }
+
+    /* split-image-right: text left panel, image right panel side by side */
+    .tpl-hero.split-image-right { background: var(--surface); flex-wrap: wrap; gap: 0; padding: 0; }
+    .tpl-hero.split-image-right .tpl-hero-inner { flex: 1 1 320px; padding: 60px 5%; max-width: none; }
+    .tpl-hero.split-image-right .tpl-hero-image { flex: 1 1 320px; min-height: 320px; align-self: stretch; background: var(--hero-bg); background-size: cover; background-position: center; }
+
+    /* split-image-left: image left panel, text right panel side by side */
+    .tpl-hero.split-image-left { background: var(--surface); flex-wrap: wrap; gap: 0; padding: 0; flex-direction: row-reverse; }
+    .tpl-hero.split-image-left .tpl-hero-inner { flex: 1 1 320px; padding: 60px 5%; max-width: none; }
+    .tpl-hero.split-image-left .tpl-hero-image { flex: 1 1 320px; min-height: 320px; align-self: stretch; background: var(--hero-bg); background-size: cover; background-position: center; }
+
+    /* image-overlay-left: full bg image, text left aligned on top (same as image-right alias) */
+    .tpl-hero.image-overlay-left {
+      background: linear-gradient(90deg, rgba(0,0,0,calc(var(--hero-overlay) + 0.3)) 0%, rgba(0,0,0,calc(var(--hero-overlay) - 0.1)) 60%, rgba(0,0,0,0.1) 100%), var(--hero-bg);
+      background-size: cover; background-position: center;
+    }
+    .tpl-hero.image-overlay-left .tpl-hero-image { display: none; }
+    .tpl-hero-inner { max-width: 640px; }
+    
+    .tpl-hero .tag {
+      display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); margin-bottom: 16px;
+    }
+    .tpl-hero h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; margin-bottom: 14px; color: var(--hero-text); }
+    .tpl-hero p { font-size: 1.05rem; opacity: 0.92; margin-bottom: 24px; max-width: 520px; color: var(--hero-text); }
+    .tpl-hero .tag { color: var(--hero-text); }
+    .tpl-cta {
+      display: inline-block; padding: 14px 28px; border-radius: 12px; font-weight: 700;
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #fff;
+      text-decoration: none; transition: transform 0.2s;
+    }
+    .tpl-cta:hover { transform: translateY(-2px); }
+
+    .tpl-section { padding: 64px 5%; }
+    .tpl-section h2 { font-size: 1.75rem; color: var(--accent); margin-bottom: 8px; }
+    .tpl-section .sub { opacity: 0.7; margin-bottom: 32px; }
+
+    .tpl-products.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; }
+    .tpl-products.list { display: flex; flex-direction: column; gap: 16px; }
+    .tpl-products.compact { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+
+    .tpl-products.list .tpl-card { display: flex; flex-direction: row; }
+    .tpl-products.list .tpl-card img { width: 200px; height: 150px; flex-shrink: 0; }
+
+    .tpl-card {
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--card-radius); overflow: hidden; transition: 0.25s;
+    }
+    .tpl-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .tpl-card img { width: 100%; height: 190px; object-fit: cover; }
+    .tpl-card-body { padding: 16px; }
+    .tpl-card h3 { font-size: 1rem; margin-bottom: 6px; }
+    .tpl-card p { font-size: 0.85rem; opacity: 0.75; margin-bottom: 10px; }
+    .tpl-card-footer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .tpl-price { font-weight: 700; color: var(--accent); font-size: 1.1rem; }
+    .tpl-btn {
+      width: 100%; padding: 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #fff;
+    }
+    .tpl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .tpl-about { background: rgba(255,255,255,0.03); text-align: center; }
+    .tpl-about p { max-width: 680px; margin: 0 auto; opacity: 0.85; }
+    .tpl-chips { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+    .tpl-chip {
+      padding: 8px 16px; border-radius: 20px; border: 1px solid var(--accent);
+      font-size: 0.85rem; color: var(--accent);
+    }
+
+    .tpl-promo { display: none; padding: 14px 5%; background: var(--primary); text-align: center; font-weight: 600; }
+    .tpl-promo.show { display: block; }
+
+    .tpl-categories { display: none; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+    .tpl-categories.show { display: flex; }
+    .tpl-cat {
+      padding: 10px 18px; border-radius: 10px; background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; cursor: pointer;
+    }
+    .tpl-cat.active { border-color: var(--accent); color: var(--accent); }
+
+    .tpl-empty { text-align: center; opacity: 0.6; padding: 40px; grid-column: 1 / -1; }
+    .tpl-footer { text-align: center; padding: 28px; opacity: 0.55; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.08); }
+    .tpl-toast {
+      position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; border-radius: 10px;
+      background: var(--primary); color: #fff; display: none; z-index: 99;
+    }
+
+    @media (max-width: 768px) {
+      .tpl-nav ul { display: none; }
+      .tpl-products.list .tpl-card { flex-direction: column; }
+      .tpl-products.list .tpl-card img { width: 100%; }
+    }
+
+    .tpl-card { cursor: pointer; }
+
+    /* Product detail modal */
+    #tplProductModal { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; }
+    #tplProductModal.open { display: flex; }
+    .tpl-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(3px); }
+    .tpl-modal-box {
+      position: relative; z-index: 1; background: var(--surface); color: var(--text);
+      width: min(720px, 92vw); max-height: 90vh; overflow-y: auto;
+      border-radius: var(--card-radius); border: 1px solid rgba(255,255,255,0.1);
+      display: flex; flex-direction: column;
+    }
+    .tpl-modal-close {
+      position: absolute; top: 12px; right: 12px; z-index: 2; width: 32px; height: 32px;
+      border-radius: 50%; border: none; background: rgba(0,0,0,0.55); color: #fff;
+      cursor: pointer; font-size: 0.95rem;
+    }
+    .tpl-modal-slider { position: relative; width: 100%; aspect-ratio: 16/10; background: #000; flex-shrink: 0; }
+    /* .tpl-modal-img { width: 100%; height: 100%; object-fit: cover; display: block; } */
+    .tpl-modal-img {
+      width: 700px;
+      height: 440px;
+      object-fit: contain;  /* fills the space, crops neatly */
+      border-radius: 12px;
+    }
+    .tpl-slide-nav {
+      position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px;
+      border-radius: 50%; border: none; background: rgba(0,0,0,0.5); color: #fff; font-size: 1.4rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2;
+    }
+    .tpl-slide-prev { left: 12px; }
+    .tpl-slide-next { right: 12px; }
+    .tpl-slide-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; gap: 6px; justify-content: center; }
+    .tpl-slide-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; }
+    .tpl-slide-dot.active { background: #fff; width: 10px; height: 10px; }
+    .tpl-modal-body { padding: 24px; }
+    .tpl-modal-cat {
+      display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
+      border: 1px solid var(--accent); color: var(--accent); margin-bottom: 10px;
+    }
+    .tpl-modal-title { font-size: 1.4rem; margin-bottom: 8px; }
+    .tpl-modal-price { font-size: 1.3rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+    .tpl-modal-stock { font-size: 0.85rem; margin-bottom: 14px; }
+    .tpl-modal-desc { opacity: 0.85; line-height: 1.6; margin-bottom: 20px; white-space: pre-wrap; }
+    .tpl-modal-actions { display: flex; gap: 10px; margin-bottom: 12px; }
+    .tpl-modal-wish {
+      background: transparent; border: 1px solid var(--accent); color: var(--accent);
+      border-radius: var(--card-radius); padding: 0 16px; cursor: pointer; font-size: 1.1rem;
+    }
+    .tpl-modal-msg {
+      width: 100%; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600;
+      background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text);
+    }
+    .tpl-modal-msg:hover { border-color: var(--accent); color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <div class="tpl-badge" id="tplBadge">AI-Themed Store Template</div>
+
+  <nav class="tpl-nav glass" id="tplNav">
+    <div class="logo" id="tplLogo">Store</div>
+    <ul>
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#" id="tplChatNavBtn" style="position:relative">
+        💬
+        <span id="tplChatDot" style="display:none;position:absolute;top:-4px;right:-8px;width:9px;height:9px;background:#ef4444;border-radius:50%"></span>
+      </a></li>
+    </ul>
+  </nav>
+
+  
+  <div class="tpl-promo" id="tplPromo"></div>
+
+  <header class="tpl-hero image-right" id="hero">
+    <div class="tpl-hero-inner">
+      <span class="tag" id="tplTagline">Welcome</span>
+      <h1 id="tplHeroTitle">Your Store</h1>
+      <p id="tplHeroSubtitle">Discover our collection</p>
+      <a class="tpl-cta" id="tplCta" href="#products">Shop Now</a>
+    </div>
+    <div class="tpl-hero-image" id="tplHeroImage"></div>
+  </header>
+
+  <section class="tpl-section" id="products">
+    <h2>Products</h2>
+    <p class="sub" id="tplProductsSub">Live inventory from your store</p>
+    <div class="tpl-categories" id="tplCategories"></div>
+    <div class="tpl-products grid" id="tplProducts"></div>
+  </section>
+
+  <section class="tpl-section tpl-about" id="about">
+    <h2 id="tplAboutTitle">About Us</h2>
+    <p id="tplAboutText">Our story</p>
+    <div class="tpl-chips" id="tplChips"></div>
+  </section>
+
+  <footer class="tpl-footer" id="tplFooter">Powered by AI Dynamic ERP</footer>
+  <div class="tpl-toast" id="tplToast">Added to cart</div>
+
+  <!-- THEME_INJECT -->
+</body>
+</html>

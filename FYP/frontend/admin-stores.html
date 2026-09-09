@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store Management</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-panel"><h2>All Stores</h2><div id="storeTable"></div></div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+initERPLayout({ title: "Store Management", activePage: "admin-stores.html", allowedRoles: ["super_admin"] });
+getAdminStores().then(res => {
+  const el = document.getElementById("storeTable");
+  if (!res.data?.length) { el.innerHTML = '<div class="erp-empty">No stores</div>'; return; }
+  el.innerHTML = `<div class="erp-table-wrap"><table class="erp-table"><thead><tr><th>Name</th><th>Type</th><th>Region</th><th>Owner ID</th><th>Created</th></tr></thead><tbody>
+    ${res.data.map(s => `<tr><td>${s.name}</td><td>${s.business_type||"—"}</td><td>${s.region||"—"}</td><td>${String(s.user_id||"").slice(0,8)}...</td><td>${formatDate(s.created_at)}</td></tr>`).join("")}
+  </tbody></table></div>`;
+});
+</script>
+</body>
+</html>

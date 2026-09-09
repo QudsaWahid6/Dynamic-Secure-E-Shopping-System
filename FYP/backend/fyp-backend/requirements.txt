@@ -1,0 +1,7 @@
+flask
+flask-cors
+supabase
+bcrypt
+PyJWT
+python-dotenv
+google-genai

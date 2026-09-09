@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CraftHome Furniture</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Segoe UI;
+background:#f2f2f2;
+}
+
+/* PREVIEW BAR */
+
+.preview-banner{
+background:#1a1a1a;
+color:white;
+text-align:center;
+padding:14px;
+font-weight:bold;
+letter-spacing:1px;
+}
+
+/* NAVBAR */
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:22px 70px;
+background:#2b2b2b;
+color:white;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
+
+nav h2{
+font-size:30px;
+color:#e0e0e0;
+}
+
+nav ul{
+display:flex;
+gap:35px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+transition:.3s;
+}
+
+nav a:hover{
+color:#aaaaaa;
+}
+
+/* HERO */
+
+.hero{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:90px 80px;
+background:linear-gradient(135deg,#1a1a1a,#4a4a4a);
+color:white;
+border-radius:0 0 40px 40px;
+}
+
+.hero-text{
+max-width:550px;
+}
+
+.hero h1{
+font-size:65px;
+margin-bottom:20px;
+line-height:1.2;
+}
+
+.hero p{
+font-size:22px;
+color:#cccccc;
+line-height:1.6;
+}
+
+.hero-btn{
+display:inline-block;
+margin-top:30px;
+background:#e0e0e0;
+color:#1a1a1a;
+padding:16px 34px;
+border-radius:35px;
+text-decoration:none;
+font-weight:bold;
+font-size:17px;
+transition:.3s;
+}
+
+.hero-btn:hover{
+transform:scale(1.05);
+}
+
+.hero img{
+width:480px;
+}
+
+/* SECTION */
+
+.section{
+padding:80px 70px;
+text-align:center;
+}
+
+.section h2{
+font-size:46px;
+color:#1a1a1a;
+margin-bottom:20px;
+}
+
+.section p{
+font-size:18px;
+color:#777;
+margin-bottom:50px;
+}
+
+/* CATEGORY CARDS */
+
+.cards{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+}
+
+.card{
+background:white;
+width:300px;
+border-radius:25px;
+overflow:hidden;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+}
+
+.card img{
+width:100%;
+height:220px;
+object-fit:cover;
+}
+
+.content{
+padding:25px;
+}
+
+.content h3{
+font-size:28px;
+margin-bottom:12px;
+color:#1a1a1a;
+}
+
+.content p{
+font-size:16px;
+margin-bottom:20px;
+color:#666;
+}
+
+.view-btn{
+display:inline-block;
+background:#2b2b2b;
+color:white;
+padding:12px 24px;
+border-radius:12px;
+text-decoration:none;
+font-weight:bold;
+}
+
+/* FEATURE SECTION */
+
+.features{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+margin-top:40px;
+}
+
+.feature-box{
+background:white;
+width:260px;
+padding:35px;
+border-radius:20px;
+box-shadow:0 8px 25px rgba(0,0,0,.1);
+}
+
+.feature-box h3{
+margin:18px 0;
+color:#1a1a1a;
+}
+
+/* FOOTER */
+
+footer{
+background:#1a1a1a;
+color:white;
+text-align:center;
+padding:35px;
+margin-top:50px;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- PREVIEW -->
+
+<div class="preview-banner">
+PREVIEW MODE — Modern Furniture Store Template
+</div>
+
+<!-- NAVBAR -->
+
+<nav>
+
+<h2>🪑 CraftHome</h2>
+
+<ul>
+<li><a href="#">Home</a></li>
+<li><a href="menu.html">Products</a></li>
+<li><a href="feedback.html">Feedback</a></li>
+</ul>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<div class="hero-text">
+
+<h1>
+Modern Furniture For Elegant Living
+</h1>
+
+<p>
+Discover luxury sofas, chairs, tables and home decor designed for modern lifestyles.
+</p>
+
+<a href="menu.html" class="hero-btn">
+Explore Collection
+</a>
+
+</div>
+
+<img src="https://img.icons8.com/clouds/500/sofa.png">
+
+</section>
+
+<!-- CATEGORIES -->
+
+<section class="section">
+
+<h2>Featured Categories</h2>
+
+<p>
+Explore our premium handcrafted furniture collections
+</p>
+
+<div class="cards">
+
+<div class="card">
+
+<img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80">
+
+<div class="content">
+
+<h3>Luxury Sofas</h3>
+
+<p>
+Modern comfortable sofas with premium quality material.
+</p>
+
+<a href="menu.html" class="view-btn">
+View Products
+</a>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<img src="https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=900&q=80">
+
+<div class="content">
+
+<h3>Wooden Tables</h3>
+
+<p>
+Elegant dining and coffee tables for stylish homes.
+</p>
+
+<a href="menu.html" class="view-btn">
+View Products
+</a>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=900&q=80">
+
+<div class="content">
+
+<h3>Home Decor</h3>
+
+<p>
+Minimal decor accessories for aesthetic interiors.
+</p>
+
+<a href="menu.html" class="view-btn">
+View Products
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="section">
+
+<h2>Why Choose CraftHome?</h2>
+
+<div class="features">
+
+<div class="feature-box">
+
+<h3>✨ Premium Design</h3>
+
+<p>
+Luxury furniture crafted with modern aesthetics.
+</p>
+
+</div>
+
+<div class="feature-box">
+
+<h3>🚚 Fast Delivery</h3>
+
+<p>
+Quick and secure delivery for all furniture items.
+</p>
+
+</div>
+
+<div class="feature-box">
+
+<h3>🛡 Quality Guarantee</h3>
+
+<p>
+High-quality wood and durable materials guaranteed.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<footer>
+
+CraftHome Dynamic Furniture Template Preview
+
+</footer>
+
+</body>
+</html>

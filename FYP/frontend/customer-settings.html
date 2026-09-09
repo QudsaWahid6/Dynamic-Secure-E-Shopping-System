@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-panel">
+    <h2>Account Settings</h2>
+    <p style="color:#94a3b8;margin-bottom:16px">Manage your account preferences.</p>
+    <a href="customer-profile.html" class="erp-btn erp-btn-primary">Edit Profile</a>
+    <button class="erp-btn erp-btn-danger" style="margin-left:12px" onclick="logout()">Logout</button>
+  </div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+initERPLayout({ title: "Settings", activePage: "customer-settings.html", allowedRoles: ["customer"] });
+</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Register - Dynamic E-Shopping</title>
+<link rel="stylesheet" href="css/public-nav.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(180deg,#0B1020 0%,#111827 65%,#0F172A 100%);
+}
+
+body::before{
+content:"";
+position:absolute;
+width:470px;
+height:470px;
+background:#2563EB;
+filter:blur(180px);
+opacity:.18;
+top:-120px;
+left:-100px;
+}
+
+body::after{
+content:"";
+position:absolute;
+width:420px;
+height:420px;
+background:#06B6D4;
+filter:blur(180px);
+opacity:.15;
+bottom:-100px;
+right:-80px;
+}
+
+.container{
+position:relative;
+z-index:2;
+display:flex;
+width:960px;
+height:580px;
+background:rgba(17,24,39,.88);
+backdrop-filter:blur(20px);
+border-radius:28px;
+overflow:hidden;
+border:1px solid rgba(56,189,248,.15);
+box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+/* LEFT */
+.left{
+flex:1;
+padding:70px;
+display:flex;
+justify-content:center;
+flex-direction:column;
+background:linear-gradient(
+135deg,
+rgba(37,99,235,.18),
+rgba(6,182,212,.10)
+);
+}
+
+.left h1{
+font-size:46px;
+line-height:1.2;
+margin-bottom:20px;
+background:linear-gradient(90deg,#38BDF8,#2563EB);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.left p{
+font-size:18px;
+line-height:1.8;
+color:#cbd5e1;
+max-width:430px;
+}
+
+.left::after{
+content:"Launch Your Smart Store";
+margin-top:30px;
+display:inline-block;
+width:max-content;
+padding:12px 22px;
+border-radius:30px;
+border:1px solid rgba(56,189,248,.3);
+color:#38BDF8;
+font-size:14px;
+}
+
+/* RIGHT */
+.right{
+flex:1;
+background:#ffffff;
+padding:60px;
+display:flex;
+justify-content:center;
+flex-direction:column;
+}
+
+.right h2{
+font-size:36px;
+margin-bottom:28px;
+background:linear-gradient(90deg,#2563EB,#06B6D4);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.input-box{
+margin-bottom:15px;
+}
+
+.input-box input{
+width:100%;
+padding:15px 18px;
+border:1px solid #dbeafe;
+border-radius:14px;
+font-size:15px;
+outline:none;
+transition:.3s;
+}
+
+.input-box input:focus{
+border-color:#38BDF8;
+box-shadow:0 0 0 4px rgba(56,189,248,.12);
+}
+
+.register-btn{
+margin-top:12px;
+padding:16px;
+width:100%;
+border:none;
+border-radius:14px;
+cursor:pointer;
+font-size:16px;
+font-weight:600;
+color:white;
+background:linear-gradient(90deg,#2563EB,#06B6D4);
+box-shadow:0 8px 25px rgba(37,99,235,.25);
+transition:.3s;
+}
+
+.register-btn:hover{
+transform:translateY(-3px);
+}
+
+.login-link{
+margin-top:18px;
+text-align:center;
+color:#64748B;
+}
+
+.login-link a{
+text-decoration:none;
+font-weight:600;
+color:#2563EB;
+}
+
+/* Mobile */
+@media(max-width:900px){
+
+.container{
+flex-direction:column;
+width:92%;
+height:auto;
+}
+
+.left,
+.right{
+padding:45px 35px;
+}
+
+.left h1{
+font-size:36px;
+}
+
+}
+
+</style>
+</head>
+
+<body class="auth-page">
+
+<nav class="landing-nav">
+  <a href="index.html" class="logo">ERP Commerce AI</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#features">Features</a>
+    <a href="index.html#ai">AI Themes</a>
+    <a href="login.html">Login</a>
+    <a href="register.html" class="active nav-cta">Register</a>
+  </div>
+</nav>
+
+<div class="auth-page-wrap">
+<div class="container">
+
+<div class="left">
+<h1>Create Account</h1>
+
+<p>
+Register now to build your own dynamic e-commerce website and mobile application.
+</p>
+</div>
+
+
+<div class="right">
+
+<h2>Register</h2>
+<div class="input-box">
+<input id="full_name" type="text" placeholder="Full Name">
+</div>
+
+<div class="input-box">
+<input id="email" type="email" placeholder="Email">
+</div>
+
+<div class="input-box">
+<input id="password" type="password" placeholder="Password">
+</div>
+
+<div class="input-box">
+<input id="confirmPassword" type="password" placeholder="Confirm Password">
+</div>
+
+<div class="input-box">
+<select id="role">
+    <option value="customer">Customer</option>
+    <option value="store_owner">Store Owner</option>
+</select>
+</div>
+
+<button type="button" class="register-btn" id="registerBtn">
+Register
+</button>
+
+<div class="login-link">
+Already have an account?
+<a href="login.html">Login</a>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+
+<script>
+document.getElementById("registerBtn").addEventListener("click", async () => {
+
+    const full_name = document.getElementById("full_name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const role = document.getElementById("role").value;
+
+    if (!full_name || !email || !password || !confirmPassword) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match");
+        return;
+    }
+
+    try {
+        const response = await apiRequest("/signup", "POST", {
+            name: full_name,
+            email: email,
+            password: password,
+            role: role
+        });
+
+        if (response.success) {
+            alert("Registration successful");
+            window.location.href = "login.html";
+        } else {
+            alert(response.message || "Signup failed");
+        }
+
+    } catch (err) {
+        console.log(err);
+        alert("Server error");
+    }
+
+});
+</script>
+
+</body>
+</html>

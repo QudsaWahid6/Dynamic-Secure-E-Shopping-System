@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Store Preview</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: #0b1020; color: #e2e8f0; }
+.toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 20px; background: #111827; border-bottom: 1px solid rgba(56,189,248,0.2);
+}
+.toolbar h1 { font-size: 1rem; color: #38bdf8; }
+.toolbar a, .toolbar button {
+  padding: 7px 14px; border-radius: 8px; text-decoration: none; font-size: 0.82rem;
+  border: 1px solid rgba(56,189,248,0.3); background: transparent; color: #38bdf8; cursor: pointer;
+}
+.toolbar .primary { background: linear-gradient(90deg,#2563eb,#06b6d4); color: #fff; border: none; }
+.color-panel {
+  background: #0f172a; border-bottom: 1px solid rgba(56,189,248,0.12);
+  padding: 10px 20px; display: none; flex-wrap: wrap; gap: 14px; align-items: center;
+}
+.color-panel.open { display: flex; }
+.color-panel label { font-size: 0.75rem; color: #94a3b8; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.color-panel input[type=color] { width: 36px; height: 30px; border: none; background: none; cursor: pointer; padding: 0; border-radius: 6px; }
+.image-panel {
+  background: #0f172a; border-bottom: 1px solid rgba(56,189,248,0.12);
+  padding: 10px 20px; display: none; flex-wrap: wrap; gap: 10px; align-items: center;
+}
+.image-panel.open { display: flex; }
+.image-panel input[type=text] {
+  flex: 1; min-width: 200px; padding: 7px 12px; border-radius: 8px;
+  background: #1e293b; border: 1px solid rgba(56,189,248,0.2); color: #e2e8f0; font-size: 0.85rem;
+}
+.panel-btn { padding: 7px 14px; border-radius: 8px; font-size: 0.82rem; cursor: pointer; }
+.apply-btn { background: linear-gradient(90deg,#2563eb,#06b6d4); color:#fff; border:none; }
+.reset-btn { background: transparent; color: #94a3b8; border: 1px solid rgba(255,255,255,0.15); }
+.save-btn { background: #22c55e; color: #fff; border: none; }
+iframe { width: 100%; border: none; background: #fff; }
+.loading { display: flex; align-items: center; justify-content: center; height: calc(100vh - 52px); color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<div class="toolbar" id="toolbar" style="display:none">
+  <h1>🌐 Live Store Preview</h1>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button id="toggleColorsBtn">🎨 Colours</button>
+    <button id="toggleImageBtn">🖼 Hero Image</button>
+    <button id="toggleLayoutBtn">⬜ Layout</button>
+    <button id="toggleTextBtn">✏️ Text</button>
+    <button id="toggleStyleBtn">⚙️ Style</button>
+    <button id="toggleCurrencyBtn">💱 Currency</button>
+    <button id="togglePaymentBtn">💳 Payment</button>
+    <button onclick="reloadFrame()">↻ Reload</button>
+    <a href="owner-theme-generator.html" class="primary" style="margin-left:4px">Back to Generator</a>
+  </div>
+</div>
+
+<div class="color-panel" id="colorPanel">
+  <label>Primary<input type="color" id="cp_primary" value="#2563eb"></label>
+  <label>Secondary<input type="color" id="cp_secondary" value="#06b6d4"></label>
+  <label>Accent<input type="color" id="cp_accent" value="#38bdf8"></label>
+  <label>Background<input type="color" id="cp_bg" value="#0f172a"></label>
+  <label>Text<input type="color" id="cp_text" value="#f1f5f9"></label>
+  <label>Hero Text<input type="color" id="cp_hero_text" value="#ffffff"></label>
+  <div style="display:flex;gap:8px;margin-left:auto">
+    <button class="panel-btn save-btn" id="saveColorsBtn">💾 Save to DB</button>
+    <button class="panel-btn reset-btn" id="resetColorsBtn">↺ Reset</button>
+  </div>
+</div>
+
+
+<div class="image-panel" id="layoutPanel">
+  <span style="color:#94a3b8;font-size:0.82rem;white-space:nowrap">Hero Layout:</span>
+  <select id="heroLayoutSelect" style="padding:7px 12px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.85rem">
+    <option value="image-right">Image Right (text left on image)</option>
+    <option value="centered">Centered (text center on image)</option>
+    <option value="split-image-right">Split Image Right (text left | image right)</option>
+    <option value="split-image-left">Split Image Left (image left | text right)</option>
+    <option value="image-overlay-left">Full Image Left Text (text left overlay, stronger gradient)</option>
+  </select>
+  <button class="panel-btn save-btn" id="saveLayoutBtn">💾 Save to DB</button>
+  <div id="layoutStatus" style="color:#94a3b8;font-size:0.8rem"></div>
+</div>
+
+
+<div class="image-panel" id="imagePanel">
+  <span style="color:#94a3b8;font-size:0.82rem;white-space:nowrap">Hero Image:</span>
+  <input type="text" id="heroImageUrl" placeholder="Paste image URL here...">
+  <span style="color:#94a3b8;font-size:0.82rem">or</span>
+  <label class="panel-btn apply-btn" style="cursor:pointer">
+    📁 Upload<input type="file" id="heroImageFile" accept="image/*" style="display:none">
+  </label>
+  <button class="panel-btn save-btn" id="saveImageBtn">💾 Save Image</button>
+  <button class="panel-btn reset-btn" id="clearImageBtn">✕ Clear</button>
+  <div id="imageStatus" style="color:#94a3b8;font-size:0.8rem"></div>
+</div>
+
+<div class="image-panel" id="textPanel">
+  <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="color:#94a3b8;font-size:0.82rem;width:100px;flex-shrink:0">Tagline:</span>
+      <input type="text" id="txt_tagline" placeholder="Store tagline..." style="flex:1;min-width:160px;padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem">
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="color:#94a3b8;font-size:0.82rem;width:100px;flex-shrink:0">Hero Title:</span>
+      <input type="text" id="txt_hero_title" placeholder="Hero title..." style="flex:1;min-width:160px;padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem">
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="color:#94a3b8;font-size:0.82rem;width:100px;flex-shrink:0">Subtitle:</span>
+      <input type="text" id="txt_subtitle" placeholder="Hero subtitle..." style="flex:1;min-width:160px;padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem">
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="color:#94a3b8;font-size:0.82rem;width:100px;flex-shrink:0">CTA Button:</span>
+      <input type="text" id="txt_cta" placeholder="Shop Now..." style="flex:1;min-width:160px;padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem">
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="color:#94a3b8;font-size:0.82rem;width:100px;flex-shrink:0">About Text:</span>
+      <input type="text" id="txt_about" placeholder="About your store..." style="flex:1;min-width:160px;padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="panel-btn save-btn" id="saveTextBtn">💾 Save to DB</button>
+      <div id="textStatus" style="color:#94a3b8;font-size:0.8rem;align-self:center"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="image-panel" id="stylePanel">
+  <div style="display:flex;flex-wrap:wrap;gap:16px;width:100%;align-items:flex-end">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span style="color:#94a3b8;font-size:0.78rem">Font</span>
+      <select id="style_font" style="padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem">
+        <option value="Poppins">Poppins</option>
+        <option value="Inter">Inter</option>
+        <option value="Roboto">Roboto</option>
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span style="color:#94a3b8;font-size:0.78rem">Nav Style</span>
+      <select id="style_nav" style="padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem">
+        <option value="glass">Glass</option>
+        <option value="solid">Solid</option>
+        <option value="minimal">Minimal</option>
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span style="color:#94a3b8;font-size:0.78rem">Card Radius</span>
+      <select id="style_radius" style="padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem">
+        <option value="4px">Sharp</option>
+        <option value="8px">Slight</option>
+        <option value="16px">Rounded</option>
+        <option value="24px">Very Round</option>
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span style="color:#94a3b8;font-size:0.78rem">Promo Banner</span>
+      <select id="style_promo" style="padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem">
+        <option value="off">Hidden</option>
+        <option value="on">Visible</option>
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:160px">
+      <span style="color:#94a3b8;font-size:0.78rem">Promo Text</span>
+      <input type="text" id="style_promo_text" placeholder="e.g. Free shipping on orders over $50" style="padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem;width:100%">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span style="color:#94a3b8;font-size:0.78rem">Store Name (Logo)</span>
+      <input type="text" id="style_store_name" placeholder="Store name..." style="padding:6px 10px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.82rem;width:160px">
+    </div>
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <button class="panel-btn save-btn" id="saveStyleBtn">💾 Save to DB</button>
+      <div id="styleStatus" style="color:#94a3b8;font-size:0.8rem;align-self:center"></div>
+    </div>
+  </div>
+</div>
+
+<div class="image-panel" id="currencyPanel">
+  <span style="color:#94a3b8;font-size:0.82rem;white-space:nowrap">Currency:</span>
+  <select id="live_currency" style="padding:7px 12px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.85rem">
+    <option value="USD">USD ($)</option>
+    <option value="PKR">PKR (Rs)</option>
+    <option value="EUR">EUR (€)</option>
+    <option value="GBP">GBP (£)</option>
+    <option value="AED">AED (د.إ)</option>
+  </select>
+  <input type="number" id="live_conversion_rate" step="0.0001" placeholder="Conversion rate to multiply with" style="display:none;width:300px;padding:7px 12px;border-radius:8px;background:#1e293b;border:1px solid rgba(56,189,248,0.2);color:#e2e8f0;font-size:0.85rem">
+  <button class="panel-btn save-btn" id="saveCurrencyBtn">💾 Save to DB</button>
+  <div id="currencyStatus" style="color:#94a3b8;font-size:0.8rem"></div>
+</div>
+
+<div class="image-panel" id="paymentPanel">
+  <span style="color:#94a3b8;font-size:0.82rem;white-space:nowrap">
+    Payment:
+  </span>
+
+  <select id="live_payment">
+      <option value="cod">Cash on Delivery</option>
+      <option value="online">Online Payment</option>
+      <option value="both">Both</option>
+  </select>
+  <input id="live_bank_title" placeholder="Account Title" style="display:none;">
+  <input id="live_bank_number" placeholder="Account Number / IBAN" style="display:none;">
+  <input id="live_bank_name" placeholder="Bank Name" style="display:none;">
+  <button class="panel-btn save-btn" id="savePaymentBtn">💾 Save to DB</button>
+
+  <div id="paymentStatus"></div>
+
+  <select id="live_payment">
+      <option value="cod">Cash on Delivery</option>
+      <option value="online">Online Payment</option>
+      <option value="both">Both</option>
+  </select>
+
+  <button class="panel-btn save-btn" id="savePaymentBtn">
+      💾 Save to DB
+  </button>
+
+  <div id="paymentStatus"></div>
+</div>
+
+<div class="loading" id="loading">Loading storefront...</div>
+<iframe id="storeFrame" style="display:none" title="Live Store"></iframe>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+let storeId = params.get("store_id");
+let activeThemeId = null;
+let dbPalette = {};
+let dbColors = null;
+
+
+const currentUser = (typeof getUser === "function") ? getUser() : null;
+const isOwner = currentUser && currentUser.role === "store_owner";
+if (isOwner) document.getElementById("toolbar").style.display = "flex";
+
+function recalcHeight() {
+  const used = document.getElementById("toolbar").offsetHeight
+    + document.getElementById("colorPanel").offsetHeight
+    + document.getElementById("layoutPanel").offsetHeight
+    + document.getElementById("imagePanel").offsetHeight
+    + document.getElementById("textPanel").offsetHeight
+    + document.getElementById("stylePanel").offsetHeight
+    + document.getElementById("currencyPanel").offsetHeight;
+  document.getElementById("storeFrame").style.height = `calc(100vh - ${used}px)`;
+}
+
+async function loadStore() {
+  const token = getToken();
+  if (!storeId && token) {
+    try {
+      const res = await fetch(`${API_BASE}/dashboard`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (data.success && data.store) storeId = data.store.id;
+    } catch(e) { console.error(e); }
+  }
+  if (!storeId) {
+    document.getElementById("loading").innerHTML = "No store found. <a href='store-owner-dashboard.html' style='color:#38bdf8'>Create a store first</a>";
+    return;
+  }
+  try {
+    const td = await fetch(`${API_BASE}/store-theme-data/${storeId}`);
+    const tdj = await td.json();
+    if (tdj.success && tdj.theme) {
+      activeThemeId = tdj.theme.id || null;
+      const pal = tdj.theme.color_palette || {};
+      dbPalette = pal;
+      if (pal.primary) document.getElementById("cp_primary").value = pal.primary;
+      if (pal.secondary) document.getElementById("cp_secondary").value = pal.secondary;
+      if (pal.accent) document.getElementById("cp_accent").value = pal.accent;
+      if (pal.background) document.getElementById("cp_bg").value = pal.background;
+      if (pal.text) document.getElementById("cp_text").value = pal.text;
+
+      const config = tdj.theme.component_config || {};
+      const heroText = pal.hero_text || config.hero_text_color || tdj.theme.hero_text_color || "#ffffff";
+      document.getElementById("cp_hero_text").value = heroText;
+      dbPalette.hero_text = heroText;
+
+
+      const bgImg = tdj.theme.background_image_url || "";
+      if (bgImg) document.getElementById("heroImageUrl").value = bgImg;
+      const heroLayout = tdj.theme.hero_layout || "image-right";
+      document.getElementById("heroLayoutSelect").value = heroLayout;
+
+      const cfg = tdj.theme.component_config || {};
+      if (tdj.theme.font_style || cfg.font_style) document.getElementById("style_font").value = tdj.theme.font_style || cfg.font_style;
+      if (cfg.nav_style) document.getElementById("style_nav").value = cfg.nav_style;
+      if (cfg.card_radius) document.getElementById("style_radius").value = cfg.card_radius;
+      document.getElementById("style_promo").value = cfg.promo_slider ? "on" : "off";
+      document.getElementById("style_promo_text").value = cfg.promo_text || "";
+      document.getElementById("live_currency").value = tdj.store?.currency || "USD";
+      document.getElementById("live_payment").value =tdj.store?.payment_options || "cod";
+      document.getElementById("live_bank_title").value =tdj.store?.bank_account_title || "";
+      document.getElementById("live_bank_number").value =tdj.store?.bank_account_number || "";
+      document.getElementById("live_bank_name").value =tdj.store?.bank_name || "";
+      window._initialLivePayment =tdj.store?.payment_options || "cod";
+      window._initialLiveCurrency = tdj.store?.currency || "USD";
+
+    }
+  } catch(e) { console.error(e); }
+
+
+  try {
+    const token = getToken();
+    const themeRes = await fetch(`${API_BASE}/themes?store_id=${storeId}`, { headers: { Authorization: `Bearer ${token}` } });
+    const themeData = await themeRes.json();
+    if (themeData.success && themeData.data && themeData.data.length) {
+      const palette = themeData.data[0].color_palette || {};
+      dbColors = {
+        primary: palette.primary || null,
+        secondary: palette.secondary || null,
+        accent: palette.accent || null,
+        bg: palette.background || null,
+        text: palette.text || null,
+        hero_text: palette.hero_text || null,
+      };
+    }
+  } catch(e) {}
+
+
+  const frame = document.getElementById("storeFrame");
+  frame.src = getStoreLiveUrl(storeId) + "?t=" + Date.now();
+  frame.onload = () => {
+    document.getElementById("loading").style.display = "none";
+    frame.style.display = "block";
+    recalcHeight();
+  };
+  frame.onerror = () => {
+    document.getElementById("loading").innerHTML = "Store could not be loaded. <a href='store-owner-dashboard.html' style='color:#38bdf8'>Check backend is running</a>";
+  };
+  
+  document.getElementById("live_payment").dispatchEvent(new Event("change"));
+}
+
+function reloadFrame() {
+  document.getElementById("loading").style.display = "flex";
+  document.getElementById("storeFrame").style.display = "none";
+  loadStore();
+}
+
+// ── Colour panel ───────────────────────────────────────────────────────────
+document.getElementById("toggleColorsBtn").addEventListener("click", () => {
+  const panel = document.getElementById("colorPanel");
+  panel.classList.toggle("open");
+  document.getElementById("imagePanel").classList.remove("open");
+  document.getElementById("layoutPanel").classList.remove("open");
+  document.getElementById("textPanel").classList.remove("open");
+  document.getElementById("stylePanel").classList.remove("open");
+  document.getElementById("currencyPanel").classList.remove("open");
+  document.getElementById("paymentPanel").classList.remove("open");
+  if (panel.classList.contains("open")) {
+    if (dbPalette.primary) document.getElementById("cp_primary").value = dbPalette.primary;
+    if (dbPalette.secondary) document.getElementById("cp_secondary").value = dbPalette.secondary;
+    if (dbPalette.accent) document.getElementById("cp_accent").value = dbPalette.accent;
+    if (dbPalette.background) document.getElementById("cp_bg").value = dbPalette.background;
+    if (dbPalette.text) document.getElementById("cp_text").value = dbPalette.text;
+    if (dbPalette.hero_text) document.getElementById("cp_hero_text").value = dbPalette.hero_text;
+  }
+  recalcHeight();
+});
+
+function applyColors() {
+  const frame = document.getElementById("storeFrame");
+  if (!frame.contentDocument) return;
+  const root = frame.contentDocument.documentElement;
+  root.style.setProperty("--primary", document.getElementById("cp_primary").value);
+  root.style.setProperty("--secondary", document.getElementById("cp_secondary").value);
+  root.style.setProperty("--accent", document.getElementById("cp_accent").value);
+  root.style.setProperty("--bg", document.getElementById("cp_bg").value);
+  root.style.setProperty("--text", document.getElementById("cp_text").value);
+  root.style.setProperty("--hero-text", document.getElementById("cp_hero_text").value);
+
+  // Force repaint of surface-colored elements
+  try {
+    const doc = frame.contentDocument;
+    doc.querySelectorAll(".tpl-card, .tpl-cat, .tpl-nav").forEach(el => {
+      el.style.transition = "none";
+      void el.offsetHeight; // force reflow
+      el.style.transition = "";
+    });
+  } catch(e) {}
+
+}
+
+["cp_primary","cp_secondary","cp_accent","cp_bg","cp_text","cp_hero_text"].forEach(id => {
+  document.getElementById(id).addEventListener("input", applyColors);
+});
+
+document.getElementById("resetColorsBtn").addEventListener("click", () => {
+  if (dbPalette.primary) document.getElementById("cp_primary").value = dbPalette.primary;
+  if (dbPalette.secondary) document.getElementById("cp_secondary").value = dbPalette.secondary;
+  if (dbPalette.accent) document.getElementById("cp_accent").value = dbPalette.accent;
+  if (dbPalette.background) document.getElementById("cp_bg").value = dbPalette.background;
+  if (dbPalette.text) document.getElementById("cp_text").value = dbPalette.text;
+  if (dbPalette.hero_text) document.getElementById("cp_hero_text").value = dbPalette.hero_text;
+
+  applyColors();
+});
+
+document.getElementById("saveColorsBtn").addEventListener("click", async () => {
+  if (!activeThemeId) { alert("No theme found — generate a theme first."); return; }
+  const heroText = document.getElementById("cp_hero_text").value;
+  const palette = {
+    primary: document.getElementById("cp_primary").value,
+    secondary: document.getElementById("cp_secondary").value,
+    accent: document.getElementById("cp_accent").value,
+    background: document.getElementById("cp_bg").value,
+    text: document.getElementById("cp_text").value,
+    hero_text: heroText,
+  };
+  const res = await updateTheme(activeThemeId, { color_palette: palette });
+  if (res.success) {
+    dbPalette = { ...palette };
+    document.getElementById("saveColorsBtn").textContent = "✓ Saved!";
+    setTimeout(() => document.getElementById("saveColorsBtn").textContent = "💾 Save to DB", 2000);
+  } else {
+    alert("Save failed: " + (res.error || "unknown"));
+  }
+});
+document.getElementById("toggleTextBtn").addEventListener("click", () => {
+  const panel = document.getElementById("textPanel");
+  panel.classList.toggle("open");
+  document.getElementById("colorPanel").classList.remove("open");
+  document.getElementById("imagePanel").classList.remove("open");
+  document.getElementById("layoutPanel").classList.remove("open");
+  document.getElementById("stylePanel").classList.remove("open");
+  document.getElementById("currencyPanel").classList.remove("open");
+  document.getElementById("paymentPanel").classList.remove("open");
+
+  if (panel.classList.contains("open")) {
+    const frame = document.getElementById("storeFrame");
+    if (frame.contentDocument) {
+      document.getElementById("txt_tagline").value = frame.contentDocument.getElementById("tplTagline")?.textContent || "";
+      document.getElementById("txt_hero_title").value = frame.contentDocument.getElementById("tplHeroTitle")?.textContent || "";
+      document.getElementById("txt_subtitle").value = frame.contentDocument.getElementById("tplHeroSubtitle")?.textContent || "";
+      document.getElementById("txt_cta").value = frame.contentDocument.getElementById("tplCta")?.textContent || "";
+      document.getElementById("txt_about").value = frame.contentDocument.getElementById("tplAboutText")?.textContent || "";
+    }
+  }
+  recalcHeight();
+});
+
+// ── Hero btn panel ───────────────────────────────────────────────────────
+document.getElementById("toggleLayoutBtn").addEventListener("click", () => {
+  document.getElementById("layoutPanel").classList.toggle("open");
+  document.getElementById("colorPanel").classList.remove("open");
+  document.getElementById("imagePanel").classList.remove("open");
+  document.getElementById("textPanel").classList.remove("open");
+  document.getElementById("stylePanel").classList.remove("open");
+  document.getElementById("currencyPanel").classList.remove("open");
+  document.getElementById("paymentPanel").classList.remove("open");
+  recalcHeight();
+});
+
+// ── Hero image panel ───────────────────────────────────────────────────────
+document.getElementById("toggleImageBtn").addEventListener("click", () => {
+  document.getElementById("imagePanel").classList.toggle("open");
+  document.getElementById("colorPanel").classList.remove("open");
+  document.getElementById("layoutPanel").classList.remove("open");
+  document.getElementById("textPanel").classList.remove("open");
+  document.getElementById("stylePanel").classList.remove("open");
+  document.getElementById("currencyPanel").classList.remove("open");
+  document.getElementById("paymentPanel").classList.remove("open");
+  recalcHeight();
+});
+
+function applyHeroImage(url) {
+  const frame = document.getElementById("storeFrame");
+  if (!frame.contentDocument) return;
+  const hero = frame.contentDocument.querySelector(".tpl-hero");
+  if (hero) {
+    hero.style.backgroundImage = url ? `url('${url}')` : "";
+    hero.style.backgroundSize = "cover";
+    hero.style.backgroundPosition = "center";
+  }
+}
+
+document.getElementById("heroImageUrl").addEventListener("input", e => applyHeroImage(e.target.value));
+
+document.getElementById("heroImageFile").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const status = document.getElementById("imageStatus");
+  status.textContent = "Uploading...";
+  const url = await uploadImageToImgBB(file);
+  if (url) {
+    document.getElementById("heroImageUrl").value = url;
+    applyHeroImage(url);
+    status.textContent = "✓ Uploaded";
+  } else {
+    status.textContent = "Upload failed — check ImgBB API key in api.js";
+  }
+});
+
+document.getElementById("saveImageBtn").addEventListener("click", async () => {
+  if (!activeThemeId) { alert("No theme found — generate a theme first."); return; }
+  const url = document.getElementById("heroImageUrl").value.trim();
+  const status = document.getElementById("imageStatus");
+  const res = await updateTheme(activeThemeId, { background_image_url: url });
+  if (res.success) {
+    status.textContent = "✓ Saved!";
+    setTimeout(() => status.textContent = "", 2500);
+  } else {
+    status.textContent = "Save failed: " + (res.error || "unknown");
+  }
+});
+
+document.getElementById("clearImageBtn").addEventListener("click", () => {
+  document.getElementById("heroImageUrl").value = "";
+  applyHeroImage("");
+});
+
+function applyLayout(layout) {
+  const frame = document.getElementById("storeFrame");
+  if (!frame.contentDocument) return;
+  const heroEl = frame.contentDocument.querySelector(".tpl-hero");
+  if (heroEl) {
+    heroEl.classList.remove("image-right", "image-left", "split", "centered", "split-image-right", "split-image-left", "image-overlay-left");
+    heroEl.classList.add(layout);
+  }
+}
+
+document.getElementById("heroLayoutSelect").addEventListener("change", () => {
+  applyLayout(document.getElementById("heroLayoutSelect").value);
+});
+
+document.getElementById("saveLayoutBtn").addEventListener("click", async () => {
+  if (!activeThemeId) { alert("No theme found — generate a theme first."); return; }
+  const layout = document.getElementById("heroLayoutSelect").value;
+  const status = document.getElementById("layoutStatus");
+  const res = await updateTheme(activeThemeId, { hero_layout: layout });
+  if (res.success) {
+    status.textContent = "✓ Saved!";
+    setTimeout(() => status.textContent = "", 2500);
+  } else {
+    status.textContent = "Save failed: " + (res.error || "unknown");
+  }
+});
+function applyText() {
+  const frame = document.getElementById("storeFrame");
+  if (!frame.contentDocument) return;
+  const doc = frame.contentDocument;
+  const get = id => document.getElementById(id).value.trim();
+  if (doc.getElementById("tplTagline")) doc.getElementById("tplTagline").textContent = get("txt_tagline");
+  if (doc.getElementById("tplHeroTitle")) doc.getElementById("tplHeroTitle").textContent = get("txt_hero_title");
+  if (doc.getElementById("tplHeroSubtitle")) doc.getElementById("tplHeroSubtitle").textContent = get("txt_subtitle");
+  if (doc.getElementById("tplCta")) doc.getElementById("tplCta").textContent = get("txt_cta");
+  if (doc.getElementById("tplAboutText")) doc.getElementById("tplAboutText").textContent = get("txt_about");
+}
+
+["txt_tagline","txt_hero_title","txt_subtitle","txt_cta","txt_about"].forEach(id => {
+  document.getElementById(id).addEventListener("input", applyText);
+});
+
+document.getElementById("saveTextBtn").addEventListener("click", async () => {
+  if (!activeThemeId) { alert("No theme found — generate a theme first."); return; }
+  const status = document.getElementById("textStatus");
+  const page_content = {
+    store_tagline: document.getElementById("txt_tagline").value.trim(),
+    hero_title: document.getElementById("txt_hero_title").value.trim(),
+    hero_subtitle: document.getElementById("txt_subtitle").value.trim(),
+    cta_text: document.getElementById("txt_cta").value.trim(),
+    about_text: document.getElementById("txt_about").value.trim(),
+  };
+  const res = await updateTheme(activeThemeId, { page_content });
+  if (res.success) {
+    status.textContent = "✓ Saved!";
+    setTimeout(() => status.textContent = "", 2500);
+  } else {
+    status.textContent = "Save failed: " + (res.error || "unknown");
+  }
+});
+
+// toggle payment button panel-----------------------------------
+document.getElementById("togglePaymentBtn").addEventListener("click", () => {
+    document.getElementById("paymentPanel").classList.toggle("open");
+    document.getElementById("colorPanel").classList.remove("open");
+    document.getElementById("imagePanel").classList.remove("open");
+    document.getElementById("layoutPanel").classList.remove("open");
+    document.getElementById("textPanel").classList.remove("open");
+    document.getElementById("stylePanel").classList.remove("open");
+    document.getElementById("currencyPanel").classList.remove("open");
+    recalcHeight();
+});
+
+document.getElementById("savePaymentBtn").addEventListener("click", async () => {
+    const status = document.getElementById("paymentStatus");
+    const res = await updateStore(storeId, {
+        payment_options:document.getElementById("live_payment").value,
+        bank_account_title:document.getElementById("live_bank_title").value,
+        bank_account_number:document.getElementById("live_bank_number").value,
+        bank_name:document.getElementById("live_bank_name").value
+    });
+    if (res.success) {
+        status.textContent = "✓ Saved!";
+        reloadFrame();
+        setTimeout(() => {
+            status.textContent = "";
+        },2500);
+    } else {
+        status.textContent =
+            "Save failed: " +
+            (res.message || res.error || "Unknown");
+    }
+});
+
+// document.getElementById("savePaymentBtn").addEventListener("click", async () => {
+//     const status = document.getElementById("paymentStatus");
+//     const payment =
+//         document.getElementById("live_payment").value;
+//     const res = await updateStore(storeId, {
+//         payment_options: payment
+//     });
+
+//     if (res.success) {
+//         window._initialLivePayment = payment;
+//         status.textContent = "✓ Saved!";
+//         reloadFrame();      // same as Currency
+//         setTimeout(() => status.textContent = "", 2500);
+//     } else {
+//         status.textContent =
+//             "Save failed: " +
+//             (res.message || res.error || "unknown");
+//     }
+// });
+
+
+// ── Currency panel ────────────────────────────────────────────────────────
+document.getElementById("toggleCurrencyBtn").addEventListener("click", () => {
+  document.getElementById("currencyPanel").classList.toggle("open");
+  document.getElementById("colorPanel").classList.remove("open");
+  document.getElementById("imagePanel").classList.remove("open");
+  document.getElementById("layoutPanel").classList.remove("open");
+  document.getElementById("textPanel").classList.remove("open");
+  document.getElementById("stylePanel").classList.remove("open");
+  document.getElementById("paymentPanel").classList.remove("open");
+  recalcHeight();
+});
+
+document.getElementById("live_currency").addEventListener("change", (e) => {
+  const changed = window._initialLiveCurrency && e.target.value !== window._initialLiveCurrency;
+  document.getElementById("live_conversion_rate").style.display = changed ? "inline-block" : "none";
+
+  const frame = document.getElementById("storeFrame");
+  if (!frame.contentDocument) return;
+  const symbolMap = { USD: "$", PKR: "Rs ", EUR: "€", GBP: "£", AED: "د.إ " };
+  const symbol = symbolMap[e.target.value] || (e.target.value + " ");
+  frame.contentDocument.querySelectorAll(".tpl-card").forEach(card => {
+    const btn = card.querySelector(".tpl-btn");
+    const priceEl = card.querySelector(".tpl-price");
+    if (btn && priceEl) {
+      priceEl.textContent = `${symbol}${(parseFloat(btn.dataset.price) || 0).toFixed(2)}`;
+    }
+  });
+});
+
+document.getElementById("live_payment").addEventListener("change", function () {
+    const show = this.value !== "cod";
+    document.getElementById("live_bank_title").style.display =show ? "inline-block" : "none";
+    document.getElementById("live_bank_number").style.display =show ? "inline-block" : "none";
+    document.getElementById("live_bank_name").style.display =show ? "inline-block" : "none";
+});
+
+
+document.getElementById("saveCurrencyBtn").addEventListener("click", async () => {
+  const status = document.getElementById("currencyStatus");
+  const newCurrency = document.getElementById("live_currency").value;
+  const rate = document.getElementById("live_conversion_rate").value;
+  const payload = { currency: newCurrency };
+  if (window._initialLiveCurrency && newCurrency !== window._initialLiveCurrency) {
+    if (!rate) { status.textContent = "Enter a conversion rate first."; return; }
+    payload.conversion_rate = parseFloat(rate);
+  }
+  const res = await updateStore(storeId, payload);
+  if (res.success) {
+    window._initialLiveCurrency = newCurrency;
+    document.getElementById("live_conversion_rate").style.display = "none";
+    status.textContent = "✓ Saved!";
+    setTimeout(() => status.textContent = "", 2500);
+  } else {
+    status.textContent = "Save failed: " + (res.message || res.error || "unknown");
+  }
+});
+// ── Style panel ────────────────────────────────────────────────────────────
+document.getElementById("toggleStyleBtn").addEventListener("click", () => {
+  const panel = document.getElementById("stylePanel");
+  panel.classList.toggle("open");
+  document.getElementById("colorPanel").classList.remove("open");
+  document.getElementById("imagePanel").classList.remove("open");
+  document.getElementById("layoutPanel").classList.remove("open");
+  document.getElementById("textPanel").classList.remove("open");
+  document.getElementById("currencyPanel").classList.remove("open");
+  document.getElementById("paymentPanel").classList.remove("open");
+  recalcHeight();
+});
+
+function applyStyle() {
+  const frame = document.getElementById("storeFrame");
+  if (!frame.contentDocument) return;
+  const doc = frame.contentDocument;
+  const root = doc.documentElement;
+  const font = document.getElementById("style_font").value;
+  root.style.setProperty("--font", `'${font}', 'Segoe UI', sans-serif`);
+  const nav = doc.getElementById("tplNav");
+  if (nav) {
+    nav.classList.remove("glass", "solid", "minimal");
+    nav.classList.add(document.getElementById("style_nav").value);
+  }
+  root.style.setProperty("--card-radius", document.getElementById("style_radius").value);
+  const promo = doc.getElementById("tplPromo");
+  if (promo) {
+    promo.classList.toggle("show", document.getElementById("style_promo").value === "on");
+    const promoText = document.getElementById("style_promo_text").value.trim();
+    if (promoText) promo.textContent = promoText;
+  }
+  const storeName = document.getElementById("style_store_name").value.trim();
+  const logo = doc.getElementById("tplLogo");
+  if (logo && storeName) logo.textContent = storeName;
+}
+
+// Auto-apply on any change
+["style_font", "style_nav", "style_radius", "style_promo"].forEach(id => {
+  document.getElementById(id).addEventListener("change", applyStyle);
+});
+document.getElementById("style_promo_text").addEventListener("input", applyStyle);
+document.getElementById("style_store_name").addEventListener("input", applyStyle);
+
+document.getElementById("saveStyleBtn").addEventListener("click", async () => {
+  if (!activeThemeId) { alert("No theme found — generate a theme first."); return; }
+  const status = document.getElementById("styleStatus");
+  const storeName = document.getElementById("style_store_name").value.trim();
+  const res = await updateTheme(activeThemeId, {
+    component_config_updates: {
+      font_style: document.getElementById("style_font").value,
+      nav_style: document.getElementById("style_nav").value,
+      card_radius: document.getElementById("style_radius").value,
+      promo_slider: document.getElementById("style_promo").value === "on",
+      promo_text: document.getElementById("style_promo_text").value.trim(),
+    }
+  });
+  if (storeName && storeId) {
+    const token = getToken();
+    await fetch(`${API_BASE}/stores/${storeId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ name: storeName })
+    });
+  }
+  if (res.success) {
+    window._initialLiveCurrency = newCurrency;
+    document.getElementById("live_conversion_rate").style.display = "none";
+    status.textContent = "✓ Saved!";
+
+    reloadFrame(); // Reload the preview after currency change
+
+    setTimeout(() => status.textContent = "", 2500);
+  } else {
+    status.textContent = "Save failed: " + (res.error || "unknown");
+  }
+});
+loadStore();
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Analytics</title>
+<link rel="stylesheet" href="css/erp.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-grid" id="stats"></div>
+  <div class="erp-panel"><h2>Platform Growth (Last 14 Days)</h2><canvas id="growthChart" height="100"></canvas></div>
+  <div class="erp-panel"><h2>Revenue & Orders (Last 14 Days)</h2><canvas id="revenueChart" height="100"></canvas></div>
+  <div class="erp-panel" style="margin-top:16px"><h2>Inventory: Stock vs. Sold</h2><canvas id="inventoryChart" height="100"></canvas></div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+initERPLayout({ title: "System Analytics", activePage: "admin-analytics.html", allowedRoles: ["super_admin"] });
+
+function renderGrowthChart(growth) {
+  const days = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+  new Chart(document.getElementById("growthChart"), {
+    type: "line",
+    data: {
+      labels: days.map(d => d.slice(5)),
+      datasets: [
+        { label: "New Users", data: days.map(d => growth.users[d] || 0), borderColor: "#38bdf8" },
+        { label: "New Orders", data: days.map(d => growth.orders[d] || 0), borderColor: "#facc15" },
+      ],
+    },
+  });
+}
+
+getAdminStats().then(res => {
+  if (!res.stats) return;
+
+  document.getElementById("stats").innerHTML = Object.entries(res.stats).map(([k,v]) =>
+    `<div class="erp-card"><h3>${k}</h3><div class="value">${v}</div></div>`
+  ).join("");
+
+  renderGrowthChart(res.growth || { users: {}, orders: {} });
+
+  // Revenue & Orders chart
+  const days = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+  const growth = res.growth || { users: {}, orders: {} };
+  new Chart(document.getElementById("revenueChart"), {
+    type: "line",
+    data: {
+      labels: days.map(d => d.slice(5)),
+      datasets: [
+        {
+          label: "Orders",
+          data: days.map(d => growth.orders[d] || 0),
+          borderColor: "#facc15",
+          backgroundColor: "rgba(250,204,21,0.1)",
+          fill: true,
+          tension: 0.4,
+        }
+      ]
+    },
+    options: {
+      plugins: { legend: { labels: { color: "#94a3b8" } } },
+      scales: {
+        x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.05)" } },
+        y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.05)" }, beginAtZero: true }
+      }
+    }
+  });
+
+  // Inventory chart using platform totals
+  new Chart(document.getElementById("inventoryChart"), {
+    type: "doughnut",
+    data: {
+      labels: ["Products in Stock", "Orders Fulfilled"],
+      datasets: [{
+        data: [res.stats.products || 0, res.stats.orders || 0],
+        backgroundColor: ["#34d399", "#f87171"],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      plugins: { legend: { labels: { color: "#94a3b8" } } }
+    }
+  });
+});
+</script>
+</body>
+</html>

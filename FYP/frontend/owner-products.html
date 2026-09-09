@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products - Store Owner</title>
+<link rel="stylesheet" href="css/erp.css">
+<style>
+.img-preview-grid {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;
+}
+.img-thumb {
+  position: relative; width: 90px; height: 90px; border-radius: 8px;
+  overflow: hidden; border: 2px solid rgba(56,189,248,0.2);
+}
+.img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.img-thumb .remove-img {
+  position: absolute; top: 3px; right: 3px; background: rgba(0,0,0,0.7);
+  color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px;
+  font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.img-thumb .primary-badge {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(56,189,248,0.8); color: #fff; font-size: 0.6rem;
+  text-align: center; padding: 2px;
+}
+.img-upload-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+.img-upload-row input[type=text] { flex: 1; min-width: 180px; }
+.field-error { border-color: #ef4444 !important; }
+.field-error-msg { color: #ef4444; font-size: 0.78rem; margin-top: 3px; display: none; }
+.upload-status { font-size: 0.8rem; color: #94a3b8; margin-top: 4px; min-height: 16px; }
+</style>
+</head>
+<body>
+<div id="page-root">
+  <div id="alertArea"></div>
+  <div class="erp-toolbar">
+    <input class="erp-input" id="searchInput" placeholder="Search products..." style="max-width:280px">
+    <button class="erp-btn erp-btn-primary" id="addBtn">+ Add Product</button>
+    <button class="erp-btn erp-btn-secondary" id="manageCatsBtn">🗂 Manage Categories</button>
+  </div>
+
+  <div class="erp-panel" id="formPanel" style="display:none">
+    <h2 id="formTitle">Add Product</h2>
+    <input type="hidden" id="editId">
+
+    <!-- Name -->
+    <div class="erp-form-group">
+      <label>Name <span style="color:#ef4444">*</span></label>
+      <input class="erp-input" id="pName" placeholder="Product name">
+      <div class="field-error-msg" id="err-pName">Name is required</div>
+    </div>
+
+    <!-- Description -->
+    <div class="erp-form-group">
+      <label>Description <span style="color:#ef4444">*</span></label>
+      <textarea class="erp-input" id="pDesc" rows="3" placeholder="Describe the product..." style="resize:vertical"></textarea>
+      <div class="field-error-msg" id="err-pDesc">Description is required</div>
+    </div>
+
+    <!-- Price + Stock -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div class="erp-form-group" style="flex:1;min-width:120px">
+        <label>Price ($) <span style="color:#ef4444">*</span></label>
+        <input class="erp-input" id="pPrice" type="number" step="0.01" min="0" placeholder="0.00">
+        <div class="field-error-msg" id="err-pPrice">Valid price required</div>
+      </div>
+      <div class="erp-form-group" style="flex:1;min-width:120px">
+        <label>Stock <span style="color:#ef4444">*</span></label>
+        <input class="erp-input" id="pStock" type="number" min="0" placeholder="0">
+        <div class="field-error-msg" id="err-pStock">Stock quantity required</div>
+      </div>
+    </div>
+
+    <!-- Category -->
+    <div class="erp-form-group">
+      <label>Category <span style="color:#ef4444">*</span></label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select class="erp-input" id="pCategory" style="flex:1;min-width:160px">
+          <option value="">Select a category...</option>
+        </select>
+        <button class="erp-btn erp-btn-secondary" id="addCategoryBtn" type="button">+ New Category</button>
+        <button class="erp-btn erp-btn-secondary" id="suggestCategoryBtn" type="button" title="Let AI suggest a category based on the name/description">✨ AI Suggest</button>
+      </div>
+      <div id="newCategoryRow" style="display:none;gap:8px;margin-top:8px;align-items:center">
+        <input class="erp-input" id="newCategoryInput" placeholder="New category name" style="flex:1">
+        <button class="erp-btn erp-btn-primary" id="saveCategoryBtn" type="button">Add</button>
+        <button class="erp-btn erp-btn-secondary" id="cancelCategoryBtn" type="button">Cancel</button>
+      </div>
+      <div class="field-error-msg" id="err-pCategory">Category is required — pick one or add a new one</div>
+      <div class="upload-status" id="categoryStatus"></div>
+    </div>
+
+    <!-- Images -->
+    <div class="erp-form-group">
+      <label>Product Images <span style="color:#64748b;font-size:0.8rem">(first image = main, max 5)</span></label>
+      <div class="img-upload-row">
+        <input class="erp-input" id="imgUrlInput" placeholder="Paste image URL and press Add">
+        <button class="erp-btn erp-btn-secondary" id="addUrlBtn" type="button">+ Add URL</button>
+        <label class="erp-btn erp-btn-secondary" style="cursor:pointer;margin:0">
+          📁 Upload
+          <input type="file" id="imgFileInput" accept="image/*" multiple style="display:none">
+        </label>
+      </div>
+      <div class="upload-status" id="uploadStatus"></div>
+      <div class="img-preview-grid" id="imgPreviewGrid"></div>
+      <div class="field-error-msg" id="err-pImage">At least one image is required</div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="erp-btn erp-btn-primary" id="saveBtn">💾 Save Product</button>
+      <button class="erp-btn erp-btn-secondary" id="cancelBtn">Cancel</button>
+    </div>
+  </div>
+
+  <div class="erp-panel" id="catPanel" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="margin:0">🗂 Manage Categories</h2>
+      <button class="erp-btn erp-btn-secondary" id="closeCatPanel">✕ Close</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input class="erp-input" id="catPanelInput" placeholder="New category name" style="flex:1">
+      <button class="erp-btn erp-btn-primary" id="catPanelAddBtn">+ Add</button>
+    </div>
+    <div id="catPanelStatus" style="font-size:0.8rem;color:#94a3b8;margin-bottom:10px;min-height:16px"></div>
+    <div id="catPanelList"></div>
+  </div>
+
+  <div class="erp-panel"><div id="productTable"></div></div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/products.js"></script>
+<script>
+const user = initERPLayout({ title: "Products", activePage: "owner-products.html", allowedRoles: ["store_owner"] });
+if (user) {
+  const alertArea = document.getElementById("alertArea");
+  const table = document.getElementById("productTable");
+  let products = [];
+  let storeId = null;
+  let imageList = []; // array of URLs
+  let categoryList = []; // [{id, name}]
+
+  // ── Category dropdown ─────────────────────────────────────────────────
+  function renderCategorySelect(selectedValue) {
+    const sel = document.getElementById("pCategory");
+    const current = selectedValue !== undefined ? selectedValue : sel.value;
+    sel.innerHTML = '<option value="">Select a category...</option>' +
+      categoryList.map(c => `<option value="${c.name}">${c.name}</option>`).join("");
+    if (current && !categoryList.some(c => c.name === current)) {
+      sel.innerHTML += `<option value="${current}">${current} (legacy)</option>`;
+    }
+    sel.value = current || "";
+  }
+
+  async function loadCategories() {
+    if (!storeId) return;
+    const res = await getProductCategories(storeId);
+    categoryList = res.success ? (res.data || []) : [];
+    renderCategorySelect();
+  }
+
+  document.getElementById("addCategoryBtn").addEventListener("click", () => {
+    document.getElementById("newCategoryRow").style.display = "flex";
+    document.getElementById("newCategoryInput").focus();
+  });
+  document.getElementById("cancelCategoryBtn").addEventListener("click", () => {
+    document.getElementById("newCategoryRow").style.display = "none";
+    document.getElementById("newCategoryInput").value = "";
+  });
+  document.getElementById("saveCategoryBtn").addEventListener("click", async () => {
+    const name = document.getElementById("newCategoryInput").value.trim();
+    if (!name) return;
+    const res = await createProductCategory(name, storeId);
+    if (res.success) {
+      await loadCategories();
+      renderCategorySelect(res.data ? res.data.name : name);
+      document.getElementById("newCategoryRow").style.display = "none";
+      document.getElementById("newCategoryInput").value = "";
+      document.getElementById("pCategory").classList.remove("field-error");
+      document.getElementById("err-pCategory").style.display = "none";
+    } else {
+      showAlert(alertArea, res.error || "Could not add category");
+    }
+  });
+
+  document.getElementById("suggestCategoryBtn").addEventListener("click", async () => {
+    const name = document.getElementById("pName").value.trim();
+    const desc = document.getElementById("pDesc").value.trim();
+    if (!name && !desc) {
+      showAlert(alertArea, "Add a product name or description first so AI has something to work with", "");
+      return;
+    }
+    const status = document.getElementById("categoryStatus");
+    status.textContent = "✨ Asking AI for a category suggestion...";
+    const res = await suggestProductCategory({ name, description: desc, store_id: storeId });
+    if (!res.success) {
+      status.textContent = "Could not get a suggestion — pick one manually.";
+      return;
+    }
+    const { category, is_new, reason } = res.data;
+    if (is_new) {
+      const createRes = await createProductCategory(category, storeId);
+      if (createRes.success) await loadCategories();
+    }
+    renderCategorySelect(category);
+    document.getElementById("pCategory").classList.remove("field-error");
+    document.getElementById("err-pCategory").style.display = "none";
+    status.textContent = `✓ Suggested "${category}"${is_new ? " (added as new)" : ""}${reason ? " — " + reason : ""}`;
+    setTimeout(() => { status.textContent = ""; }, 5000);
+  });
+
+  // ── Image preview grid ────────────────────────────────────────────────
+  function renderImageGrid() {
+    const grid = document.getElementById("imgPreviewGrid");
+    if (!imageList.length) { grid.innerHTML = ""; return; }
+    grid.innerHTML = imageList.map((url, i) => `
+      <div class="img-thumb">
+        <img src="${url}" alt="img${i}" onerror="this.src=''">
+        <button class="remove-img" data-idx="${i}" title="Remove">✕</button>
+        ${i === 0 ? '<div class="primary-badge">Main</div>' : ""}
+      </div>
+    `).join("");
+    grid.querySelectorAll(".remove-img").forEach(btn => {
+      btn.addEventListener("click", () => {
+        imageList.splice(parseInt(btn.dataset.idx), 1);
+        renderImageGrid();
+      });
+    });
+  }
+
+  async function addImageUrl(url) {
+    url = url.trim();
+    if (!url) return;
+    if (imageList.length >= 5) { showAlert(alertArea, "Maximum 5 images allowed", ""); return; }
+    // Validate URL loads as image
+    const ok = await new Promise(res => {
+      const t = new Image(); t.onload = () => res(true); t.onerror = () => res(false); t.src = url;
+    });
+    if (!ok) { showAlert(alertArea, "Cannot load that image URL — check it is a direct image link", ""); return; }
+    imageList.push(url);
+    renderImageGrid();
+    document.getElementById("imgUrlInput").value = "";
+  }
+
+  document.getElementById("addUrlBtn").addEventListener("click", () => {
+    addImageUrl(document.getElementById("imgUrlInput").value);
+  });
+  document.getElementById("imgUrlInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); addImageUrl(document.getElementById("imgUrlInput").value); }
+  });
+
+  document.getElementById("imgFileInput").addEventListener("change", async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const status = document.getElementById("uploadStatus");
+    const remaining = 5 - imageList.length;
+    const toUpload = files.slice(0, remaining);
+    if (!toUpload.length) { showAlert(alertArea, "Maximum 5 images allowed", ""); return; }
+    status.textContent = `Uploading ${toUpload.length} image(s)...`;
+    for (const file of toUpload) {
+      const url = await uploadImageToImgBB(file);
+      if (url) { imageList.push(url); renderImageGrid(); }
+    }
+    status.textContent = "✓ Done";
+    setTimeout(() => status.textContent = "", 2000);
+    e.target.value = "";
+  });
+
+  // ── Validation ─────────────────────────────────────────────────────────
+  function validateForm() {
+    let valid = true;
+    const checks = [
+      { id: "pName", errId: "err-pName", test: v => v.trim().length > 0 },
+      { id: "pDesc", errId: "err-pDesc", test: v => v.trim().length > 0 },
+      { id: "pPrice", errId: "err-pPrice", test: v => !isNaN(parseFloat(v)) && parseFloat(v) >= 0 },
+      { id: "pStock", errId: "err-pStock", test: v => !isNaN(parseInt(v)) && parseInt(v) >= 0 },
+      { id: "pCategory", errId: "err-pCategory", test: v => v.trim().length > 0 },
+    ];
+    checks.forEach(({ id, errId, test }) => {
+      const el = document.getElementById(id);
+      const err = document.getElementById(errId);
+      if (!test(el.value)) {
+        el.classList.add("field-error");
+        err.style.display = "block";
+        valid = false;
+      } else {
+        el.classList.remove("field-error");
+        err.style.display = "none";
+      }
+    });
+    // Image check
+    const imgErr = document.getElementById("err-pImage");
+    if (!imageList.length) {
+      imgErr.style.display = "block"; valid = false;
+    } else {
+      imgErr.style.display = "none";
+    }
+    return valid;
+  }
+
+  // Clear red on input
+  ["pName","pDesc","pPrice","pStock"].forEach(id => {
+    document.getElementById(id).addEventListener("input", () => {
+      document.getElementById(id).classList.remove("field-error");
+      document.getElementById(`err-${id}`).style.display = "none";
+    });
+  });
+  document.getElementById("pCategory").addEventListener("change", () => {
+    document.getElementById("pCategory").classList.remove("field-error");
+    document.getElementById("err-pCategory").style.display = "none";
+  });
+
+  // ── Load / render ──────────────────────────────────────────────────────
+  async function load() {
+    const dash = await getDashboard();
+    if (dash.success) storeId = dash.store.id;
+    const res = await getProducts(storeId ? { store_id: storeId } : {});
+    products = res.data || [];
+    await loadCategories();
+    renderList();
+  }
+
+  function renderList() {
+    const q = document.getElementById("searchInput").value.toLowerCase();
+    const filtered = products.filter(p => p.name.toLowerCase().includes(q));
+    renderProductTable(table, filtered, {
+      onEdit: (id) => openForm(products.find(p => p.id === id)),
+      onDelete: async (id) => {
+        if (!confirm("Delete this product?")) return;
+        const res = await deleteProduct(id);
+        if (res.success) load(); else showAlert(alertArea, res.error || "Delete failed");
+      },
+    });
+  }
+
+  function openForm(p) {
+    document.getElementById("formPanel").style.display = "block";
+    document.getElementById("formPanel").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("formTitle").textContent = p ? "Edit Product" : "Add Product";
+    document.getElementById("editId").value = p?.id || "";
+    document.getElementById("pName").value = p?.name || "";
+    document.getElementById("pDesc").value = p?.description || "";
+    document.getElementById("pPrice").value = p?.price || "";
+    document.getElementById("pStock").value = p?.stock ?? "";
+    renderCategorySelect(p?.category || "");
+    // Load images
+    imageList = [];
+    if (p?.images && Array.isArray(p.images) && p.images.length) {
+      imageList = [...p.images];
+    } else if (p?.image_url) {
+      imageList = [p.image_url];
+    }
+    renderImageGrid();
+    // Clear errors
+    ["pName","pDesc","pPrice","pStock"].forEach(id => {
+      document.getElementById(id).classList.remove("field-error");
+      document.getElementById(`err-${id}`).style.display = "none";
+    });
+    document.getElementById("pCategory").classList.remove("field-error");
+    document.getElementById("err-pCategory").style.display = "none";
+    document.getElementById("err-pImage").style.display = "none";
+    document.getElementById("uploadStatus").textContent = "";
+    document.getElementById("categoryStatus").textContent = "";
+    document.getElementById("newCategoryRow").style.display = "none";
+  }
+
+  document.getElementById("addBtn").addEventListener("click", () => openForm(null));
+  document.getElementById("cancelBtn").addEventListener("click", () => {
+    document.getElementById("formPanel").style.display = "none";
+    imageList = [];
+  });
+  document.getElementById("searchInput").addEventListener("input", renderList);
+
+  document.getElementById("saveBtn").addEventListener("click", async () => {
+    if (!validateForm()) return;
+    const data = {
+      name: document.getElementById("pName").value.trim(),
+      description: document.getElementById("pDesc").value.trim(),
+      price: parseFloat(document.getElementById("pPrice").value),
+      stock: parseInt(document.getElementById("pStock").value) || 0,
+      category: document.getElementById("pCategory").value.trim(),
+      image_url: imageList[0] || "",
+      images: imageList,
+    };
+    const id = document.getElementById("editId").value;
+    const res = id ? await updateProduct(id, data) : await createProduct(data);
+    if (res.success) {
+      document.getElementById("formPanel").style.display = "none";
+      imageList = [];
+      load();
+    } else {
+      showAlert(alertArea, res.error || "Save failed");
+    }
+  });
+
+load();
+
+  // ── Category Panel ────────────────────────────────────────────────────
+  function renderCatPanelList() {
+    const list = document.getElementById("catPanelList");
+    if (!categoryList.length) {
+      list.innerHTML = '<div style="color:#64748b;padding:12px">No categories yet. Add one above.</div>';
+      return;
+    }
+    list.innerHTML = categoryList.map(c => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:8px;margin-bottom:6px">
+        <span style="color:#f1f5f9">${c.name}</span>
+        <button class="erp-btn erp-btn-secondary" style="padding:4px 10px;font-size:0.75rem;color:#ef4444;border-color:#ef4444" data-catid="${c.id}">Delete</button>
+      </div>
+    `).join("");
+    list.querySelectorAll("[data-catid]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const status = document.getElementById("catPanelStatus");
+        if (!confirm("Delete this category?")) return;
+        const res = await deleteProductCategory(btn.dataset.catid);
+        if (res.success) {
+          await loadCategories();
+          renderCategorySelect();
+          renderCatPanelList();
+          status.textContent = "✓ Deleted";
+          setTimeout(() => status.textContent = "", 2000);
+          } else {
+          showBlockingError(res.error || "Delete failed");
+        }
+        // } else {
+        //   status.style.color = "#ef4444";
+        //   status.textContent = res.error || "Delete failed";
+        //   setTimeout(() => { status.textContent = ""; status.style.color = "#94a3b8"; }, 10000);
+        // }
+      });
+    });
+  }
+
+  document.getElementById("manageCatsBtn").addEventListener("click", () => {
+    document.getElementById("catPanel").style.display = "block";
+    document.getElementById("catPanel").scrollIntoView({ behavior: "smooth" });
+    renderCatPanelList();
+  });
+  document.getElementById("closeCatPanel").addEventListener("click", () => {
+    document.getElementById("catPanel").style.display = "none";
+    document.getElementById("catPanelInput").value = "";
+    document.getElementById("catPanelStatus").textContent = "";
+  });
+  document.getElementById("catPanelAddBtn").addEventListener("click", async () => {
+    const name = document.getElementById("catPanelInput").value.trim();
+    if (!name) return;
+    const status = document.getElementById("catPanelStatus");
+    const res = await createProductCategory(name, storeId);
+    if (res.success) {
+      await loadCategories();
+      renderCategorySelect();
+      renderCatPanelList();
+      document.getElementById("catPanelInput").value = "";
+      status.style.color = "#94a3b8";
+      status.textContent = `✓ "${name}" added`;
+      setTimeout(() => status.textContent = "", 2000);
+    } else {
+      status.style.color = "#ef4444";
+      status.textContent = res.error || "Could not add category";
+    }
+  });
+  document.getElementById("catPanelInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("catPanelAddBtn").click();
+  });
+function showBlockingError(message) {
+    const existing = document.getElementById("blockingError");
+    if (existing) existing.remove();
+    const el = document.createElement("div");
+    el.id = "blockingError";
+    el.style.cssText = "position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;background:#1e293b;border:1px solid #ef4444;border-radius:10px;padding:16px 20px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.5);display:flex;gap:12px;align-items:flex-start";
+    el.innerHTML = `
+      <span style="color:#ef4444;font-size:1.2rem;flex-shrink:0">⚠️</span>
+      <span style="color:#f1f5f9;flex:1;font-size:0.9rem;line-height:1.5">${message}</span>
+      <button style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;flex-shrink:0;padding:0;line-height:1" onclick="this.closest('#blockingError').remove()">✕</button>
+    `;
+    document.body.appendChild(el);
+  }
+}
+</script>
+
+</body>
+</html>

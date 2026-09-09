@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat</title>
+<link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div id="page-root">
+  <div class="erp-panel" style="display:flex;gap:0;height:75vh;padding:0;overflow:hidden;border-radius:14px">
+    <div style="width:300px;background:#ffffff;color:#1e293b;border-right:2px solid #e2e8f0;overflow-y:auto">
+      <div style="padding:16px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;background:#f8fafc">
+        <h3 style="margin:0;color:#0f172a">Chats</h3>
+        <button id="blockedListBtn" class="erp-btn" style="font-size:0.75rem;padding:5px 12px;background:#e2e8f0;color:#334155;border:none;border-radius:6px">Blocked</button>
+      </div>
+      <div id="chatList"></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;background:#0f172a">
+      <div id="chatHeader" style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.1);display:none;background:#1e293b"></div>
+      <div id="chatThread" style="flex:1;overflow-y:auto;padding:18px"></div>
+      <div id="chatInputBar" style="padding:14px;border-top:1px solid rgba(255,255,255,0.1);display:none;background:#1e293b">
+        <div style="display:flex;gap:8px">
+          <input id="chatInput" type="text" placeholder="Type a message..." style="flex:1;padding:11px 14px;border-radius:20px;background:#0f172a;border:1px solid rgba(56,189,248,0.3);color:#e2e8f0;outline:none">
+          <button id="chatSendBtn" class="erp-btn erp-btn-primary" style="border-radius:20px;padding:10px 20px">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/chat.js"></script>
+<script>
+initERPLayout({ title: "Chat", activePage: "customer-chat.html", allowedRoles: ["customer"] });
+initChatPage("customer");
+</script>
+</body>
+</html>

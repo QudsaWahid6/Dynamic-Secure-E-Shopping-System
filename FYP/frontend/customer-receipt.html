@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receipt</title>
+<link rel="stylesheet" href="css/erp.css">
+<style>
+  body {
+    max-width: 480px;
+    margin: 40px auto;
+    background: #0f172a;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  .receipt-card {
+    background: #1e293b;
+    border: 1px solid rgba(148,163,184,0.15);
+    border-radius: 14px;
+    padding: 28px 26px;
+    color: #e2e8f0;
+  }
+  .receipt-card h2 {
+    margin: 0 0 4px;
+    font-size: 1.25rem;
+    color: #f1f5f9;
+  }
+  .receipt-meta {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin: 2px 0;
+  }
+  .receipt-divider {
+    border: none;
+    border-top: 1px solid rgba(148,163,184,0.15);
+    margin: 16px 0;
+  }
+  .receipt-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.92rem;
+    color: #cbd5e1;
+    margin: 6px 0;
+  }
+  .receipt-line span:first-child { color: #e2e8f0; }
+  .receipt-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #38bdf8;
+    margin-top: 4px;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.78rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(56,189,248,0.15);
+    color: #38bdf8;
+    margin-top: 6px;
+  }
+  .receipt-note {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+  .note-warn { background: rgba(245,158,11,0.12); color: #f59e0b; }
+  .note-info { background: rgba(148,163,184,0.1); color: #94a3b8; }
+  .receipt-img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: block;
+  }
+  .print-btn {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #38bdf8;
+    color: #0f172a;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .print-btn:hover { background: #0ea5e9; }
+  @media print { .no-print { display: none; } body { background: #fff; } .receipt-card { background: #fff; color: #000; border: 1px solid #ccc; } }
+</style>
+</head>
+<body>
+<div id="receipt" class="receipt-card">Loading...</div>
+<button class="print-btn no-print" onclick="window.print()">Print Receipt</button>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+(async () => {
+  const orderId = new URLSearchParams(location.search).get("order_id");
+  const res = await getOrders();
+  const order = (res.data || []).find(o => o.id === orderId);
+  const el = document.getElementById("receipt");
+  if (!order) { el.innerHTML = "<p>Order not found.</p>"; return; }
+
+  const isOnline = order.payment_method === "online";
+
+  const itemsHtml = (order.items || []).map(i => `
+    <div class="receipt-line">
+      <span>${(i.products && i.products.name) || 'Item'} × ${i.quantity}</span>
+      <span>$${(i.price * i.quantity).toFixed(2)}</span>
+    </div>
+  `).join("");
+
+  const paymentNote = isOnline
+    ? (order.receipt_image_url
+        ? `<div class="receipt-note note-info">Payment receipt on file:<img class="receipt-img" src="${order.receipt_image_url}"></div>`
+        : `<div class="receipt-note note-warn">⚠️ Marked as online payment, but no receipt image is on file.</div>`)
+    : `<div class="receipt-note note-info">Paid via Cash on Delivery — no receipt image applicable.</div>`;
+
+  el.innerHTML = `
+    <h2>Receipt</h2>
+    <p class="receipt-meta">Order #${order.id.slice(0,8)}</p>
+    <p class="receipt-meta">${new Date(order.created_at).toLocaleString()}</p>
+    <p class="receipt-meta">📍 ${order.shipping_address || "N/A"} · 📞 ${order.shipping_phone || "N/A"}</p>
+    <span class="badge">💳 ${isOnline ? "Online Payment" : "Cash on Delivery"}</span>
+    <hr class="receipt-divider">
+    ${itemsHtml}
+    <hr class="receipt-divider">
+    <div class="receipt-total"><span>Total</span><span>$${Number(order.total_amount || 0).toFixed(2)}</span></div>
+    ${paymentNote}
+  `;
+})();
+</script>
+</body>
+</html>

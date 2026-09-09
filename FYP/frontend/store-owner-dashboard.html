@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store Dashboard - ERP Commerce</title>
+<link rel="stylesheet" href="css/erp.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="page-root">
+  <div id="alertArea"></div>
+  <div class="erp-grid" id="statsGrid">
+    <div class="erp-card"><h3>Products</h3><div class="value" id="statProducts">—</div></div>
+    <div class="erp-card"><h3>Orders</h3><div class="value" id="statOrders">—</div></div>
+    <div class="erp-card"><h3>Low Stock</h3><div class="value" id="statLowStock">—</div></div>
+    <div class="erp-card"><h3>Active Theme</h3><div class="value" id="statTheme" style="font-size:1rem">—</div></div>
+  </div>
+  <div class="erp-panel" id="noStorePanel" style="display:none">
+    <h2>Create Your Store</h2>
+    <p style="color:#94a3b8;margin-bottom:16px">You don't have a store yet. Create one to start selling.</p>
+    <div class="erp-form-group"><label>Store Name</label><input class="erp-input" id="storeName"></div>
+    <div class="erp-form-group"><label>Business Type</label><input class="erp-input" id="businessType" placeholder="e.g. food, furniture, fashion"></div>
+    <div class="erp-form-group"><label>Region</label><select class="erp-select" id="storeRegion"><option>Pakistan</option><option>Middle East</option><option>Europe</option><option>USA</option></select></div>
+    <button class="erp-btn erp-btn-primary" id="createStoreBtn">Create Store + AI Theme</button>
+  </div>
+  <div class="erp-panel" id="storePanel" style="display:none">
+    <h2>Store: <span id="storeNameDisplay"></span></h2>
+    <canvas id="dashChart" height="80"></canvas>
+  </div>
+</div>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script>
+  function renderDashChart(orders) {
+  const days = [];
+  const statuses = ["pending", "shipped", "delivered", "cancelled"];
+  const colors = { pending: "#ef4444", shipped: "#38bdf8", delivered: "#22c55e", cancelled: "#94a3b8" };
+  const byStatusByDay = {};
+  statuses.forEach(s => byStatusByDay[s] = {});
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    days.push(key);
+    statuses.forEach(s => byStatusByDay[s][key] = 0);
+  }
+  orders.forEach(o => {
+    const key = (o.created_at || "").slice(0, 10);
+    const status = byStatusByDay[o.status] ? o.status : "pending";
+    if (byStatusByDay[status][key] !== undefined) {
+      byStatusByDay[status][key] += Number(o.total_amount || 0);
+    }
+  });
+  if (window._dashChartInstance) window._dashChartInstance.destroy();
+  window._dashChartInstance = new Chart(document.getElementById("dashChart"), {
+    type: "bar",
+    data: {
+      labels: days.map(d => d.slice(5)),
+      datasets: statuses.map(s => ({
+        label: s.charAt(0).toUpperCase() + s.slice(1),
+        data: days.map(d => byStatusByDay[s][d]),
+        backgroundColor: colors[s],
+        hidden: s !== "pending",
+      })),
+    },
+  });
+}
+const user = initERPLayout({ title: "Store Dashboard", activePage: "store-owner-dashboard.html", allowedRoles: ["store_owner"] });
+if (user) {
+  const alertArea = document.getElementById("alertArea");
+  async function load() {
+    const res = await getDashboard();
+    if (!res.success) {
+      document.getElementById("noStorePanel").style.display = "block";
+      return;
+    }
+    document.getElementById("noStorePanel").style.display = "none";
+    document.getElementById("storePanel").style.display = "block";
+    document.getElementById("storeNameDisplay").textContent = res.store.name;
+    document.getElementById("statProducts").textContent = res.stats?.product_count ?? 0;
+    document.getElementById("statOrders").textContent = res.stats?.order_count ?? 0;
+    document.getElementById("statLowStock").textContent = res.stats?.low_stock_count ?? 0;
+    document.getElementById("statTheme").textContent = res.theme?.theme_name || "Default";
+    renderDashChart(res.orders || []);
+  
+  }
+  load();
+  document.getElementById("createStoreBtn").addEventListener("click", async () => {
+    const storeName = document.getElementById("storeName").value.trim();
+    const businessType = document.getElementById("businessType").value.trim();
+    if (!storeName) { showAlert(alertArea, "Store Name is required"); return; }
+    if (!businessType) { showAlert(alertArea, "Business Type is required (e.g. food, fashion, furniture)"); return; }
+    const btn = document.getElementById("createStoreBtn");
+    btn.disabled = true;
+    btn.textContent = "Creating with AI...";
+    const res = await createStore({
+      store_name: storeName,
+      business_type: businessType,
+      region: document.getElementById("storeRegion").value,
+      style: "modern",
+    });
+    btn.disabled = false;
+    btn.textContent = "Create Store + AI Theme";
+    if (res.success) {
+      showAlert(alertArea, "Store created with AI theme!", "success");
+      if (res.store) {
+        const link = document.createElement("a");
+        link.href = `store-live.html?store_id=${res.store.id}`;
+        link.className = "erp-btn erp-btn-primary";
+        link.style.cssText = "display:inline-block;margin-top:12px;text-decoration:none";
+        link.textContent = "View Live AI Storefront →";
+        alertArea.appendChild(link);
+      }
+      load();
+    } else showAlert(alertArea, res.error || res.message || "Failed to create store");
+  });
+}
+</script>
+</body>
+</html>
